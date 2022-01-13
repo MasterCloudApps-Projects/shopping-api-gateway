@@ -53,13 +53,16 @@ The next requirements are necessary to work with this project:
 ## Project structure
 Project is composed by the next modules:
 * **api**: [openapi](https://swagger.io/specification/) definition with REST endpoints.
+* **postman**: postman collection and environments configuration.
 * **src**: source code.
     * **main**:
       * **java**: java code.
-        * **es.codeurjc.mca.tfm**: parent package.
-          * **apigateway**: contains main API Gateway class.
+        * **es.codeurjc.mca.tfm.apigateway**: parent package.
+          * **users**: package containing code associated to users API.
+          * **ApigatewayApplication.java**: contains main API Gateway class.
       * **resources**: application resources.
-        * **application.properties**: application properties for configuration.
+        * **application.yml**: application properties for configuration.
+        * **keystore.jks**: repository of security certificates.
   * **test**: test folder.
       * **java**: java code.
           * **es.codeurjc.mca.tfm**: parent package.
@@ -69,7 +72,7 @@ Project is composed by the next modules:
 * **README.md**: this file.
 
 ## Configuration
-Project configuration is in [src/main/resources/application.properties](./src/main/resources/application.properties) file.
+Project configuration is in [src/main/resources/application.yml](./src/main/resources/application.yml) file.
 
 ### Properties description
 > No properties defined yet.
