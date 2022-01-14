@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   users:
-    image: amartinm82/tfm-users:1.0.0
+    image: amartinm82/tfm-users:trunk
     ports:
       - 8443:8443
     environment:
