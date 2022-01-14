@@ -54,6 +54,7 @@ The next requirements are necessary to work with this project:
 ## Project structure
 Project is composed by the next modules:
 * **api**: [openapi](https://swagger.io/specification/) definition with REST endpoints.
+* **checkstyle**: contains project style for IDE plugin.
 * **docker**: contains docker files
   * **docker-compose-dev.yml**: allows to launch the necessary resources to run the app in local (MySQL database, and users API).
 * **postman**: postman collection and environments configuration.
@@ -120,7 +121,10 @@ To run application locally:
 ## Contributing
 To contribute to this project have in mind:
 1. It was developed using [TBD](https://trunkbaseddevelopment.com/), so only main branch exists, and is necessary that every code pushed to remote repository is ready to be deployed in production environment.
-2. In order to ensure the right style and code conventions, and that code to commit and push is ok, this project use __pre-commit and pre-push git hooks__. 
+2. In order to ensure the right style and code conventions, and that code to commit and push is ok, this project use __pre-commit and pre-push git hooks__.
+   This is implemented using [githook-maven-plugin](https://mvnrepository.com/artifact/io.github.phillipuniverse/githook-maven-plugin/1.0.5).
+    * **pre-commit:** This hook run [maven-checkstyle-plugin](https://maven.apache.org/plugins/maven-checkstyle-plugin/) and tests, and if fails, changes can't be committed.
+    * **pre-push:** 
    > TODO
 4. The API First approach was used, so please, if is necessary to modify API, in first place you must modify and validate [openapi definition](./api/openapi.yml), and later, perform the code changes.
 5. Every code you modify or add must have a test that check the right behaviour of it (As a future task we'll add sonar to ensure there is a minimum coverage).
