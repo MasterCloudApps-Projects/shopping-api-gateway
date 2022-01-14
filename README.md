@@ -53,6 +53,8 @@ The next requirements are necessary to work with this project:
 ## Project structure
 Project is composed by the next modules:
 * **api**: [openapi](https://swagger.io/specification/) definition with REST endpoints.
+* **docker**: contains docker files
+  * **docker-compose-dev.yml**: allows to launch the necessary resources to run the app in local (MySQL database, and users API).
 * **postman**: postman collection and environments configuration.
 * **src**: source code.
     * **main**:
@@ -94,9 +96,19 @@ mvn test
 ### Run application
 
 #### Locally
-```
-mvn spring-boot:run
-```
+To run application locally:
+1. Up necessary services:
+   ```
+   docker-compose -f docker/docker-compose-dev.yml up
+   ```
+   Note: to stop services when they are not necessary run:
+   ```
+   docker-compose -f docker/docker-compose-dev.yml down
+   ```
+2. Execute the app:
+    ```
+    mvn spring-boot:run
+    ```
 
 #### As docker container
 > No docker configuration defined yet
