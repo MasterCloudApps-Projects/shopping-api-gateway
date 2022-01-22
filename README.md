@@ -38,7 +38,6 @@ The next requirements are necessary to work with this project:
 ### Dependencies
 * [Spring Boot 2.6.2](https://docs.spring.io/spring-boot/docs/2.6.2/reference/html/): open source Java-based framework that offers a fast way to build applications.
 * [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway#overview): library for building an API Gateway on top of Spring WebFlux.
-* [Githook-maven-plugin](https://mvnrepository.com/artifact/io.github.phillipuniverse/githook-maven-plugin/1.0.5): Maven plugin to configure and install local git hooks.
 
 ### Development dependencies
 * [Spring Boot 2.6.2 Test dependencies](https://docs.spring.io/spring-boot/docs/2.6.2/reference/html/features.html#features.testing.test-scope-dependencies): Testing provided libraries.
@@ -49,6 +48,8 @@ The next requirements are necessary to work with this project:
   * Mockito: A Java mocking framework.
   * JSONassert: An assertion library for JSON.
   * JsonPath: XPath for JSON.
+* [Githook-maven-plugin](https://mvnrepository.com/artifact/io.github.phillipuniverse/githook-maven-plugin/1.0.5): Maven plugin to configure and install local git hooks.
+* [Pact consumer](https://docs.pact.io/implementation_guides/jvm/consumer/junit5): JUnit 5 support for [Pact](https://docs.pact.io/) consumer tests (CDCT).
 
 
 ## Project structure

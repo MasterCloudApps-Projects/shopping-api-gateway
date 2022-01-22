@@ -19,6 +19,7 @@
     <githook-maven-plugin>1.0.5</githook-maven-plugin>
     <checkstyle-maven-plugin.version>3.1.2</checkstyle-maven-plugin.version>
     <checkstyle.version>9.2.1</checkstyle.version>
+    <pact.version>4.3.4</pact.version>
   </properties>
   <dependencies>
     <dependency>
@@ -35,6 +36,13 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>au.com.dius.pact.consumer</groupId>
+      <artifactId>junit5</artifactId>
+      <version>${pact.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -62,6 +70,16 @@
         <configuration>
           <source>11</source>
           <target>11</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <pact.rootDir>target/pacts</pact.rootDir>
+          </systemPropertyVariables>
+          <useSystemClassLoader>false</useSystemClassLoader>
         </configuration>
       </plugin>
       <plugin>
