@@ -1,0 +1,28 @@
+users:
+  url: https://${DOCKER_HOST_IP:localhost}:8443/api/v1
+
+spring:
+  config:
+    activate:
+      on-profile: test
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      httpclient:
+        ssl:
+          useInsecureTrustManager: true
+        wiretap: true
+      httpserver:
+        wiretap: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: DEBUG
+
+server:
+  ssl:
+    key-store-password: password
+    key-store: classpath:keystore.jks
+  port: 8444
