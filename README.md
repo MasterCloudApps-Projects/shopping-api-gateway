@@ -50,6 +50,7 @@ The next requirements are necessary to work with this project:
   * JsonPath: XPath for JSON.
 * [Githook-maven-plugin](https://mvnrepository.com/artifact/io.github.phillipuniverse/githook-maven-plugin/1.0.5): Maven plugin to configure and install local git hooks.
 * [Pact consumer](https://docs.pact.io/implementation_guides/jvm/consumer/junit5): JUnit 5 support for [Pact](https://docs.pact.io/) consumer tests (CDCT).
+* [Apache HttpClient](https://hc.apache.org/httpcomponents-client-4.5.x/index.html): HTTP agent implementation based on HttpCore used in tests to disable SSL.
 
 
 ## Project structure
@@ -70,8 +71,14 @@ Project is composed by the next modules:
         * **keystore.jks**: repository of security certificates.
   * **test**: test folder.
       * **java**: java code.
-          * **es.codeurjc.mca.tfm**: parent package.
-              * **apigateway**: contains main API Gateway class test.
+          * **es.codeurjc.mca.tfm.apigateway**: parent package.
+              * **cdct**: contains CDCT tests.
+                * **consumers**: CDCT consumers tests. These tests generate pact contract in `target/pact`.
+                  * **users**: users API CDCT consumer tests.
+                * **providers**: CDCT providers tests. These tests check contract against providers images.
+                  * **users**: users API CDCT provider tests.
+      * **resources**: application test resources.
+        * **application-test.yml**: application properties for testing configuration.
 * **LICENSE**: Apache 2 license file.
 * **pom.xml**: file that contains information about the project and configuration details used by Maven to build the project.
 * **README.md**: this file.
