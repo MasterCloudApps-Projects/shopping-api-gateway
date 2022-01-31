@@ -21,6 +21,7 @@
     <checkstyle.version>9.2.1</checkstyle.version>
     <pact.version>4.3.4</pact.version>
     <apache.httpclient>4.5.13</apache.httpclient>
+    <testcontainers.version>1.16.3</testcontainers.version>
   </properties>
   <dependencies>
     <dependency>
@@ -54,11 +55,23 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>${apache.httpclient}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
 

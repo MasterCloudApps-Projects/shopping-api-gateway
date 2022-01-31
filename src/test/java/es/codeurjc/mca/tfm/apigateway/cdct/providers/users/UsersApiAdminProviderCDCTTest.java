@@ -10,6 +10,7 @@ import au.com.dius.pact.provider.junit5.PactVerificationInvocationContextProvide
 import au.com.dius.pact.provider.junitsupport.Provider;
 import au.com.dius.pact.provider.junitsupport.State;
 import au.com.dius.pact.provider.junitsupport.loader.PactFolder;
+import es.codeurjc.mca.tfm.apigateway.testcontainers.AbstractContainerBaseTest;
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -41,12 +42,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @PactFolder("target/pacts")
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("test")
-public class UsersApiAdminProviderCDCTTest {
+public class UsersApiAdminProviderCDCTTest extends AbstractContainerBaseTest {
 
   @Value("${users.url}")
   private String usersUrl;
-
-  // TODO: use test container to run locally image to check provider
 
   @BeforeEach
   void before(PactVerificationContext context) {

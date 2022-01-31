@@ -16,10 +16,10 @@ spring:
       httpserver:
         wiretap: true
 
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    reactor.netty: DEBUG
+#logging:
+#  level:
+#    org.springframework.cloud.gateway: DEBUG
+#    reactor.netty: DEBUG
 
 server:
   ssl:
