@@ -1,0 +1,26 @@
+version: '3.9'
+services:
+  users:
+    image: amartinm82/tfm-users:trunk
+    ports:
+      - 8443:8443
+    environment:
+      # Environment variables for connect to MySQL
+      - RDS_HOSTNAME=mysql
+      - RDS_DB_NAME=users
+      - RDS_USERNAME=root
+      - RDS_PASSWORD=pass
+    depends_on:
+      - mysql
+    command: "node src/server.js"
+    restart: on-failure
+
+  mysql:
+    image: mysql:8.0.27
+    ports:
+      - 3306:3306
+    environment:
+      # Enviroment variables for securize MySQL and create default Database
+      - MYSQL_DATABASE=users
+      - MYSQL_ROOT_PASSWORD=pass
+    restart: always

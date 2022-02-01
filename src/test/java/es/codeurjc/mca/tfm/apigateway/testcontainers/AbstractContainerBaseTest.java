@@ -24,7 +24,7 @@ public abstract class AbstractContainerBaseTest {
 
   static {
     ENVIRONMENT =
-        new DockerComposeContainer(new File("docker/docker-compose-dev.yml"))
+        new DockerComposeContainer(new File("src/test/resources/docker-compose-test.yml"))
             .withExposedService(MYSQL_SERVICE_NAME, MYSQL_PORT,
                 Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)))
             .withExposedService(USERS_SERVICE_NAME, USERS_PORT,

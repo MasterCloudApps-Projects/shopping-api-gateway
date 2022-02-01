@@ -17,6 +17,12 @@ public class CDCTConstants {
       + "  \"password\": \"P4ssword\""
       + "}";
 
+  public static final String JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFETUlOX1JPTEUiLCJpYXQiOjE2MzczNDY5ODEsImV4cCI6MTYzNzM0NzI4MX0.3s7zdOKbrY2CTMfd4qkQbapLMId-DlQL55Il05wWAFA";
+
+  public static final String JWT_TOKEN_RESPONSE = "{"
+      + "\"token\":\""+JWT_TOKEN+"\""
+      + "}";
+
   public static final String INVALID_POST_BODY = "{"
       + "  \"username\": \"a.martinmar.2020\","
       + "  \"password\": \"P4ssword\""
@@ -35,8 +41,27 @@ public class CDCTConstants {
       + "  \"error\": \"Invalid credentials.\""
       + "}";
 
+  public static final String VALID_USERNAME_AND_PWD_POST_BODY = "{"
+      + "  \"username\": \"a.martinmar.2021@alumnos.urjc.es\","
+      + "  \"password\": \"P4ssword\""
+      + "}";
+
+  public static final int ID = 1;
+
+  public static final String CREATED_RESPONSE = "{"
+      + "\"id\":1"
+      + "}";
+
+  public static final String ADMIN_ALREADY_EXISTS_RESPONSE = "{\n"
+      + "    \"error\": \"Already exists an admin with that username\"\n"
+      + "  }";
+
+
   public static final Map<String, String> HEADERS = MapUtils.putAll(new HashMap<>(), new String[]{
       "Content-Type", APPLICATION_JSON_VALUE
   });
+
+  public static final String LOCATION_HEADER = "Location";
+
 
 }

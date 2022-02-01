@@ -73,6 +73,10 @@ public class UsersApiAdminProviderCDCTTest extends AbstractContainerBaseTest {
     }
   }
 
+  @State({"A non-existent admin"})
+  public void nonExistentAdmin() throws Exception {
+  }
+
   private CloseableHttpClient getHttpClient()
       throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
     final TrustStrategy acceptingTrustStrategy = (certificate, authType) -> true;
