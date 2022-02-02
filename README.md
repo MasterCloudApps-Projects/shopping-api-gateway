@@ -79,8 +79,7 @@ Project is composed by the next modules:
                   * **users**: users API CDCT consumer tests.
                 * **providers**: CDCT providers tests. These tests check contract against providers images.
                   * **users**: users API CDCT provider tests.
-              * **testcontainers**: contains necessary testcontainers classes for testing purposes.
-                * **AbstractContainerBaseTest.java**: Abstract class that launch [src/test/resources/users-docker-compose-test.yml](src/test/resources/users-docker-compose-test.yml) to run necessary docker images.
+                    * **AbstractUsersApiBaseProviderCDCTTest.java**: Abstract class that launch [src/test/resources/users-docker-compose-test.yml](src/test/resources/users-docker-compose-test.yml) to run necessary docker images.
       * **resources**: application test resources.
         * **application-test.yml**: application properties for testing configuration.
         * **users-docker-compose-test.yml**: users API docker compose file for testing purposes without volumes.

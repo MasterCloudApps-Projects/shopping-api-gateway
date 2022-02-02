@@ -16,13 +16,11 @@ import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.LOCATION_HEADER;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.VALID_CREDENTIALS_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.VALID_USERNAME_AND_PWD_POST_BODY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import au.com.dius.pact.consumer.MockServer;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
-import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
@@ -32,29 +30,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith({PactConsumerTestExt.class, SpringExtension.class})
+
 @PactTestFor(providerName = "UsersApiAdminV1Provider", pactVersion = PactSpecVersion.V3)
-@ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
-@ActiveProfiles("test")
-public class UsersApiAdminConsumerCDCTTest {
 
-  @Value("${users.url}")
-  private String usersUrl;
-
-  @BeforeEach
-  public void setUp(MockServer mockServer) {
-    assertNotNull(mockServer);
-  }
+public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerCDCTTest {
 
   @Pact(consumer = "UsersApiAdminV1Consumer")
   public RequestResponsePact adminAuthentication(PactDslWithProvider builder) {
