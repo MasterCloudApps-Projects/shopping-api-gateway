@@ -8,9 +8,13 @@ import org.apache.commons.collections.MapUtils;
 
 public class CDCTConstants {
 
+  public static final String AUTH_URL = "/auth";
+
   public static final String ADMINS_BASE_URL = "/admins";
 
-  public static final String ADMINS_AUTH_URL = ADMINS_BASE_URL + "/auth";
+  public static final String ADMINS_AUTH_URL = ADMINS_BASE_URL + AUTH_URL;
+
+  public static final String USERS_BASE_URL = "/users";
 
   public static final String VALID_CREDENTIALS_POST_BODY = "{"
       + "  \"username\": \"a.martinmar.2020@alumnos.urjc.es\","
@@ -54,6 +58,10 @@ public class CDCTConstants {
 
   public static final String ADMIN_ALREADY_EXISTS_RESPONSE = "{\n"
       + "    \"error\": \"Already exists an admin with that username\"\n"
+      + "  }";
+
+  public static final String USER_ALREADY_EXISTS_RESPONSE = "{\n"
+      + "    \"error\": \"Already exists an user with that username\"\n"
       + "  }";
 
 
