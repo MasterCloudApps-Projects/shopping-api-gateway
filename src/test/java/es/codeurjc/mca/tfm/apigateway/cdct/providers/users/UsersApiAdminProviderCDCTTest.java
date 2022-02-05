@@ -2,6 +2,7 @@ package es.codeurjc.mca.tfm.apigateway.cdct.providers.users;
 
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ADMINS_BASE_URL;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.VALID_CREDENTIALS_POST_BODY;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import au.com.dius.pact.provider.junitsupport.Provider;
@@ -14,10 +15,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 public class UsersApiAdminProviderCDCTTest extends AbstractUsersApiBaseProviderCDCTTest {
 
   @State({"An administrator"})
-  public void adminAuthenticationState() throws Exception {
+  public void existentAdminState() throws Exception {
 
     HttpPost postMethod = new HttpPost(this.usersUrl + ADMINS_BASE_URL);
-    postMethod.setHeader("Content-Type", APPLICATION_JSON_VALUE);
+    postMethod.setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE);
     postMethod.setEntity(new StringEntity(VALID_CREDENTIALS_POST_BODY));
 
     try (CloseableHttpClient httpClient = this.getHttpClient()) {
@@ -26,7 +27,7 @@ public class UsersApiAdminProviderCDCTTest extends AbstractUsersApiBaseProviderC
   }
 
   @State({"A non-existent admin"})
-  public void nonExistentAdmin() {
+  public void nonExistentAdminState() {
   }
 
 }

@@ -16,6 +16,7 @@ import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.LOCATION_HEADER;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.VALID_CREDENTIALS_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.VALID_USERNAME_AND_PWD_POST_BODY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import au.com.dius.pact.consumer.MockServer;
@@ -31,6 +32,7 @@ import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 
@@ -45,7 +47,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .given("An administrator")
         .uponReceiving("authenticating with valid credentials")
         .path(ADMINS_AUTH_URL)
-        .method("POST")
+        .method(HttpMethod.POST.name())
         .headers(HEADERS)
         .body(VALID_CREDENTIALS_POST_BODY)
         .willRespondWith()
@@ -61,7 +63,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
     return builder
         .given("An administrator")
         .uponReceiving("authenticating with wrong body")
-        .method("POST")
+        .method(HttpMethod.POST.name())
         .headers(HEADERS)
         .body(INVALID_POST_BODY)
         .path(ADMINS_AUTH_URL)
@@ -79,7 +81,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .given("An administrator")
         .uponReceiving("authenticating with invalid credentials")
         .path(ADMINS_AUTH_URL)
-        .method("POST")
+        .method(HttpMethod.POST.name())
         .headers(HEADERS)
         .body(INVALID_CREDENTIALS_POST_BODY)
         .willRespondWith()
@@ -95,7 +97,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .given("A non-existent admin")
         .uponReceiving("creating with valid username and password")
         .path(ADMINS_BASE_URL)
-        .method("POST")
+        .method(HttpMethod.POST.name())
         .headers(HEADERS)
         .body(VALID_USERNAME_AND_PWD_POST_BODY)
         .willRespondWith()
@@ -114,7 +116,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .given("A non-existent admin")
         .uponReceiving("creating with invalid username")
         .path(ADMINS_BASE_URL)
-        .method("POST")
+        .method(HttpMethod.POST.name())
         .headers(HEADERS)
         .body(INVALID_POST_BODY)
         .willRespondWith()
@@ -130,7 +132,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .given("An administrator")
         .uponReceiving("creating with already existent username")
         .path(ADMINS_BASE_URL)
-        .method("POST")
+        .method(HttpMethod.POST.name())
         .headers(HEADERS)
         .body(VALID_CREDENTIALS_POST_BODY)
         .willRespondWith()
@@ -146,7 +148,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
     // when
     ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
         .post(mockServer.getUrl() + ADMINS_AUTH_URL)
-        .setHeader("Content-Type", APPLICATION_JSON_VALUE)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
         .bodyString(VALID_CREDENTIALS_POST_BODY, ContentType.APPLICATION_JSON)
         .execute()
         .returnResponse();
@@ -164,7 +166,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
     // when
     ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
         .post(mockServer.getUrl() + ADMINS_AUTH_URL)
-        .setHeader("Content-Type", APPLICATION_JSON_VALUE)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
         .bodyString(INVALID_POST_BODY, ContentType.APPLICATION_JSON)
         .execute()
         .returnResponse();
@@ -182,7 +184,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
     // when
     ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
         .post(mockServer.getUrl() + ADMINS_AUTH_URL)
-        .setHeader("Content-Type", APPLICATION_JSON_VALUE)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
         .bodyString(INVALID_CREDENTIALS_POST_BODY, ContentType.APPLICATION_JSON)
         .execute()
         .returnResponse();
@@ -201,7 +203,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
     // when
     ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
         .post(mockServer.getUrl() + ADMINS_BASE_URL)
-        .setHeader("Content-Type", APPLICATION_JSON_VALUE)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
         .bodyString(VALID_USERNAME_AND_PWD_POST_BODY, ContentType.APPLICATION_JSON)
         .execute()
         .returnResponse();
@@ -221,7 +223,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
     // when
     ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
         .post(mockServer.getUrl() + ADMINS_BASE_URL)
-        .setHeader("Content-Type", APPLICATION_JSON_VALUE)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
         .bodyString(INVALID_POST_BODY, ContentType.APPLICATION_JSON)
         .execute()
         .returnResponse();
@@ -239,7 +241,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
     // when
     ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
         .post(mockServer.getUrl() + ADMINS_BASE_URL)
-        .setHeader("Content-Type", APPLICATION_JSON_VALUE)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
         .bodyString(VALID_CREDENTIALS_POST_BODY, ContentType.APPLICATION_JSON)
         .execute()
         .returnResponse();

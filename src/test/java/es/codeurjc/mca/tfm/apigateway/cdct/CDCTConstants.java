@@ -1,5 +1,6 @@
 package es.codeurjc.mca.tfm.apigateway.cdct;
 
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class CDCTConstants {
   public static final String JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFETUlOX1JPTEUiLCJpYXQiOjE2MzczNDY5ODEsImV4cCI6MTYzNzM0NzI4MX0.3s7zdOKbrY2CTMfd4qkQbapLMId-DlQL55Il05wWAFA";
 
   public static final String JWT_TOKEN_RESPONSE = "{"
-      + "\"token\":\""+JWT_TOKEN+"\""
+      + "\"token\":\"" + JWT_TOKEN + "\""
       + "}";
 
   public static final String INVALID_POST_BODY = "{"
@@ -52,6 +53,10 @@ public class CDCTConstants {
 
   public static final int ID = 1;
 
+  public static final String USERNAME = "a.martinmar.2021@alumnos.urjc.es";
+
+  public static final double BALANCE = 0.0;
+
   public static final String CREATED_RESPONSE = "{"
       + "\"id\":1"
       + "}";
@@ -64,9 +69,28 @@ public class CDCTConstants {
       + "    \"error\": \"Already exists an user with that username\"\n"
       + "  }";
 
+  public static final String ID_FIELD = "id";
+
+  public static final String USERNAME_FIELD = "username";
+
+  public static final String BALANCE_FIELD = "balance";
+
+  public static final String MISSING_TOKEN_RESPONSE = "{\n"
+      + "  \"error\": \"No token provided.\"\n"
+      + "}";
+
+  public static final String NOT_ALLOWED_RESPONSE = "{\n"
+      + "  \"error\": \"You don't have permission to access the resource\"\n"
+      + "}";
+
+  public static final String USER_NOT_FOUND_RESPONSE = "{\n"
+      + "  \"error\": \"User not found\"\n"
+      + "}";
+
+  public static final String BEARER_TOKEN = "Bearer " + JWT_TOKEN;
 
   public static final Map<String, String> HEADERS = MapUtils.putAll(new HashMap<>(), new String[]{
-      "Content-Type", APPLICATION_JSON_VALUE
+      CONTENT_TYPE, APPLICATION_JSON_VALUE
   });
 
   public static final String LOCATION_HEADER = "Location";
