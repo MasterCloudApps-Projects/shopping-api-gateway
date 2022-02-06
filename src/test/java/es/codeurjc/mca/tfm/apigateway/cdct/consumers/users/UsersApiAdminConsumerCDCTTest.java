@@ -13,6 +13,7 @@ import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.INVALID_POST_BOD
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.JWT_TOKEN;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.JWT_TOKEN_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.LOCATION_HEADER;
+import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.TOKEN_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.VALID_CREDENTIALS_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.VALID_USERNAME_AND_PWD_POST_BODY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,7 +54,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .willRespondWith()
         .status(HttpStatus.OK.value())
         .body(new PactDslJsonBody()
-            .stringType("token", JWT_TOKEN))
+            .stringType(TOKEN_FIELD, JWT_TOKEN))
         .toPact();
   }
 

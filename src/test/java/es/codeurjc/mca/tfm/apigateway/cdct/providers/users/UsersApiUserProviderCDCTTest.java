@@ -1,9 +1,9 @@
 package es.codeurjc.mca.tfm.apigateway.cdct.providers.users;
 
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ADMINS_AUTH_URL;
-import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ADMINS_BASE_URL;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.AUTH_URL;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ID_FIELD;
+import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.TOKEN_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.USERS_BASE_URL;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.VALID_CREDENTIALS_POST_BODY;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -11,7 +11,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import au.com.dius.pact.provider.junitsupport.Provider;
 import au.com.dius.pact.provider.junitsupport.State;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -23,11 +22,17 @@ import org.springframework.http.HttpStatus;
 @Provider("UsersApiUserV1Provider")
 public class UsersApiUserProviderCDCTTest extends AbstractUsersApiBaseProviderCDCTTest {
 
-  private ObjectMapper objectMapper = new ObjectMapper();
+  private static Integer USER_ID = null;
+
+  private static String USER_TOKEN = null;
+
+  private static String ADMIN_TOKEN = null;
 
   @State({"An user"})
   public void existentUserState() throws Exception {
-    this.createUser(VALID_CREDENTIALS_POST_BODY);
+    if (USER_ID == null) {
+      this.createUser(VALID_CREDENTIALS_POST_BODY);
+    }
   }
 
   @State({"A non-existent user"})
@@ -36,114 +41,95 @@ public class UsersApiUserProviderCDCTTest extends AbstractUsersApiBaseProviderCD
 
   @State({"An authenticated user"})
   public Map<String, String> authenticatedUserState() throws Exception {
-    Integer createdUserId = this.createUser(VALID_CREDENTIALS_POST_BODY);
-    if (createdUserId == null) {
-      throw new Exception("Error creating user");
+    if (USER_ID == null) {
+      this.createUser(VALID_CREDENTIALS_POST_BODY);
     }
 
-    HttpPost postMethod = new HttpPost(this.usersUrl + AUTH_URL);
-    postMethod.setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE);
-    postMethod.setEntity(new StringEntity(VALID_CREDENTIALS_POST_BODY));
-
-    Map<String, String> responseBody;
-    try (CloseableHttpClient httpClient = this.getHttpClient()) {
-      CloseableHttpResponse httpResponse = httpClient.execute(postMethod);
-      responseBody = new ObjectMapper().readValue(
-          httpResponse.getEntity().getContent(), HashMap.class);
+    if (USER_TOKEN == null) {
+      this.authenticateUser();
     }
-    responseBody.put(ID_FIELD, String.valueOf(createdUserId));
-    return responseBody;
 
+    return Map.of(TOKEN_FIELD, USER_TOKEN,
+        ID_FIELD, String.valueOf(USER_ID)
+    );
   }
 
   @State({"A different user authenticated"})
   public Map<String, String> authenticatedDifferentUserState() throws Exception {
-    final String firstUserPostBody = "{"
-        + "  \"username\": \"alumno1@alumnos.urjc.es\","
-        + "  \"password\": \"P4ssword\""
-        + "}";
-    Integer firstUserCreatedId = this.createUser(firstUserPostBody);
-    if (firstUserCreatedId == null) {
-      throw new Exception("Error creating first user");
+    if (USER_ID == null) {
+      this.createUser(VALID_CREDENTIALS_POST_BODY);
     }
 
-    Integer secondUserCreatedId = this.createUser("{"
+    if (USER_TOKEN == null) {
+      this.authenticateUser();
+    }
+
+    Integer secondUserId = this.callCreateMethod(USERS_BASE_URL, "{"
         + "  \"username\": \"alumno2@alumnos.urjc.es\","
         + "  \"password\": \"P4ssword\""
         + "}");
-    if (secondUserCreatedId == null) {
-      throw new Exception("Error creating second user");
-    }
 
-    HttpPost postMethod = new HttpPost(this.usersUrl + AUTH_URL);
-    postMethod.setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE);
-    postMethod.setEntity(new StringEntity(firstUserPostBody));
-
-    Map<String, String> responseBody;
-    try (CloseableHttpClient httpClient = this.getHttpClient()) {
-      CloseableHttpResponse httpResponse = httpClient.execute(postMethod);
-      responseBody = new ObjectMapper().readValue(
-          httpResponse.getEntity().getContent(), HashMap.class);
-    }
-    responseBody.put(ID_FIELD, String.valueOf(secondUserCreatedId));
-    return responseBody;
+    return Map.of(TOKEN_FIELD, USER_TOKEN,
+        ID_FIELD, String.valueOf(secondUserId)
+    );
 
   }
 
   @State({"An authenticated admin"})
   public Map<String, String> authenticatedAdmin() throws Exception {
-    Integer createdUserId = this.createAdmin();
-    if (createdUserId == null) {
-      throw new Exception("Error creating admin");
+    if (ADMIN_ID == null) {
+      this.createAdmin();
     }
 
-    HttpPost postMethod = new HttpPost(this.usersUrl + ADMINS_AUTH_URL);
+    if (ADMIN_TOKEN == null) {
+      this.authenticateAdmin();
+    }
+
+    return Map.of(TOKEN_FIELD, ADMIN_TOKEN,
+        ID_FIELD, "99999999"
+    );
+  }
+
+  private void createUser(String body) throws Exception {
+    try {
+      USER_ID = this.callCreateMethod(USERS_BASE_URL, body);
+    } catch (Exception e) {
+      throw new Exception("Error creating user");
+    }
+  }
+
+  private void authenticateUser() throws Exception {
+    try {
+      USER_TOKEN = this.callAuthMethod(AUTH_URL);
+    } catch (Exception e) {
+      throw new Exception("Error authenticating user");
+    }
+  }
+
+  private void authenticateAdmin() throws Exception {
+    try {
+      ADMIN_TOKEN = this.callAuthMethod(ADMINS_AUTH_URL);
+    } catch (Exception e) {
+      throw new Exception("Error authenticating admin");
+    }
+  }
+
+  private String callAuthMethod(String path) throws Exception {
+    HttpPost postMethod = new HttpPost(this.usersUrl + path);
     postMethod.setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE);
     postMethod.setEntity(new StringEntity(VALID_CREDENTIALS_POST_BODY));
 
     Map<String, String> responseBody;
     try (CloseableHttpClient httpClient = this.getHttpClient()) {
       CloseableHttpResponse httpResponse = httpClient.execute(postMethod);
-      responseBody = new ObjectMapper().readValue(
-          httpResponse.getEntity().getContent(), HashMap.class);
-    }
-    responseBody.put(ID_FIELD, String.valueOf(99999999));
-    return responseBody;
-  }
-
-  private Integer createUser(String body) throws Exception {
-    HttpPost postMethod = new HttpPost(this.usersUrl + USERS_BASE_URL);
-    postMethod.setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE);
-    postMethod.setEntity(new StringEntity(body));
-
-    Map<String, Integer> responseBody = Map.of();
-    try (CloseableHttpClient httpClient = this.getHttpClient()) {
-      CloseableHttpResponse httpResponse = httpClient.execute(postMethod);
-      if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.CREATED.value()) {
-        responseBody = new ObjectMapper().readValue(
+      if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
+        responseBody = this.objectMapper.readValue(
             httpResponse.getEntity().getContent(), HashMap.class);
+      } else {
+        throw new Exception("POST method auth doesn't return OK status code");
       }
     }
-    return responseBody.get(ID_FIELD);
-  }
-
-  private Integer createAdmin() throws Exception {
-    HttpPost postMethod = new HttpPost(this.usersUrl + ADMINS_BASE_URL);
-    postMethod.setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE);
-    postMethod.setEntity(new StringEntity("{"
-        + "  \"username\": \"newAdmin@alumnos.urjc.es\","
-        + "  \"password\": \"P4ssword\""
-        + "}"));
-
-    Map<String, Integer> responseBody = Map.of();
-    try (CloseableHttpClient httpClient = this.getHttpClient()) {
-      CloseableHttpResponse httpResponse = httpClient.execute(postMethod);
-      if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.CREATED.value()) {
-        responseBody = new ObjectMapper().readValue(
-            httpResponse.getEntity().getContent(), HashMap.class);
-      }
-    }
-    return responseBody.get(ID_FIELD);
+    return responseBody.get(TOKEN_FIELD);
   }
 
 }

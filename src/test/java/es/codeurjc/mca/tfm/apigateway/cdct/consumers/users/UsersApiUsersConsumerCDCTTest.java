@@ -17,6 +17,7 @@ import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.JWT_TOKEN_RESPON
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.LOCATION_HEADER;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.MISSING_TOKEN_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.NOT_ALLOWED_RESPONSE;
+import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.TOKEN_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.USERNAME;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.USERNAME_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.USERS_BASE_URL;
@@ -66,7 +67,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .willRespondWith()
         .status(HttpStatus.OK.value())
         .body(new PactDslJsonBody()
-            .stringType("token", JWT_TOKEN))
+            .stringType(TOKEN_FIELD, JWT_TOKEN))
         .toPact();
   }
 

@@ -75,6 +75,8 @@ public class CDCTConstants {
 
   public static final String BALANCE_FIELD = "balance";
 
+  public static final String TOKEN_FIELD = "token";
+
   public static final String MISSING_TOKEN_RESPONSE = "{\n"
       + "  \"error\": \"No token provided.\"\n"
       + "}";
@@ -88,6 +90,12 @@ public class CDCTConstants {
       + "}";
 
   public static final String BEARER_TOKEN = "Bearer " + JWT_TOKEN;
+
+  public static final double ADDED_BALANCE = 35.8;
+
+  public static final String ADD_BALANCE_POST_BODY = "{\n"
+      + "  \"amount\": " + ADDED_BALANCE + "\n"
+      + "}";
 
   public static final Map<String, String> HEADERS = MapUtils.putAll(new HashMap<>(), new String[]{
       CONTENT_TYPE, APPLICATION_JSON_VALUE
