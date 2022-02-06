@@ -1,7 +1,9 @@
 package es.codeurjc.mca.tfm.apigateway.cdct.consumers.users;
 
+import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ADDED_BALANCE;
+import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ADD_BALANCE_BAD_REQUEST_RESPONSE;
+import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ADD_BALANCE_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.AUTH_URL;
-import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.BAD_REQUEST_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.BALANCE;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.BALANCE_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.BEARER_TOKEN;
@@ -9,6 +11,7 @@ import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.CREATED_RESPONSE
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.HEADERS;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ID;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ID_FIELD;
+import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.INVALID_ADD_BALANCE_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.INVALID_CREDENTIALS_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.INVALID_CREDENTIALS_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.INVALID_POST_BODY;
@@ -19,6 +22,7 @@ import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.MISSING_TOKEN_RE
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.NOT_ALLOWED_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.TOKEN_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.USERNAME;
+import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.USERNAME_BAD_REQUEST_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.USERNAME_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.USERS_BASE_URL;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.USER_ALREADY_EXISTS_RESPONSE;
@@ -83,7 +87,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .path(AUTH_URL)
         .willRespondWith()
         .status(HttpStatus.BAD_REQUEST.value())
-        .body(BAD_REQUEST_RESPONSE)
+        .body(USERNAME_BAD_REQUEST_RESPONSE)
         .toPact();
   }
 
@@ -135,7 +139,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .body(INVALID_POST_BODY)
         .willRespondWith()
         .status(HttpStatus.BAD_REQUEST.value())
-        .body(BAD_REQUEST_RESPONSE)
+        .body(USERNAME_BAD_REQUEST_RESPONSE)
         .toPact();
   }
 
@@ -221,6 +225,97 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .toPact();
   }
 
+  @Pact(consumer = "UsersApiUserV1Consumer")
+  public RequestResponsePact addBalanceToUser(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated user")
+        .uponReceiving("adding balance to an existent user")
+        .pathFromProviderState(USERS_BASE_URL + "/${id}/balance",
+            USERS_BASE_URL + "/" + ID + "/balance")
+        .method(HttpMethod.POST.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", BEARER_TOKEN)
+        .body(ADD_BALANCE_POST_BODY)
+        .willRespondWith()
+        .status(HttpStatus.OK.value())
+        .body(new PactDslJsonBody()
+            .integerType(ID_FIELD, ID)
+            .stringType(USERNAME_FIELD, USERNAME)
+            .decimalType(BALANCE_FIELD, ADDED_BALANCE))
+        .toPact();
+  }
+
+  @Pact(consumer = "UsersApiUserV1Consumer")
+  public RequestResponsePact addBalanceToUserWithInvalidBody(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated user")
+        .uponReceiving("adding invalid balance to an existent user")
+        .pathFromProviderState(USERS_BASE_URL + "/${id}/balance",
+            USERS_BASE_URL + "/" + ID + "/balance")
+        .method(HttpMethod.POST.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", BEARER_TOKEN)
+        .body(INVALID_ADD_BALANCE_POST_BODY)
+        .willRespondWith()
+        .status(HttpStatus.BAD_REQUEST.value())
+        .body(ADD_BALANCE_BAD_REQUEST_RESPONSE)
+        .toPact();
+  }
+
+  @Pact(consumer = "UsersApiUserV1Consumer")
+  public RequestResponsePact addBalanceToUserWithoutToken(PactDslWithProvider builder) {
+
+    return builder
+        .given("An user")
+        .uponReceiving("non authenticated adding balance to an existent user")
+        .matchPath(USERS_BASE_URL + "/[0-9]+/balance", USERS_BASE_URL + "/" + ID + "/balance")
+        .method(HttpMethod.POST.name())
+        .headers(HEADERS)
+        .body(ADD_BALANCE_POST_BODY)
+        .willRespondWith()
+        .status(HttpStatus.UNAUTHORIZED.value())
+        .body(MISSING_TOKEN_RESPONSE)
+        .toPact();
+  }
+
+  @Pact(consumer = "UsersApiUserV1Consumer")
+  public RequestResponsePact addBalanceToOtherUser(PactDslWithProvider builder) {
+
+    return builder
+        .given("A different user authenticated")
+        .uponReceiving("adding balance to another existent user")
+        .pathFromProviderState(USERS_BASE_URL + "/${id}/balance",
+            USERS_BASE_URL + "/" + ID + "/balance")
+        .method(HttpMethod.POST.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", BEARER_TOKEN)
+        .body(ADD_BALANCE_POST_BODY)
+        .willRespondWith()
+        .status(HttpStatus.FORBIDDEN.value())
+        .body(NOT_ALLOWED_RESPONSE)
+        .toPact();
+  }
+
+  @Pact(consumer = "UsersApiUserV1Consumer")
+  public RequestResponsePact addBalanceToNonExistingUser(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated admin")
+        .uponReceiving("adding balance to a non existent user")
+        .pathFromProviderState(USERS_BASE_URL + "/${id}/balance",
+            USERS_BASE_URL + "/" + ID + "/balance")
+        .method(HttpMethod.POST.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", BEARER_TOKEN)
+        .body(ADD_BALANCE_POST_BODY)
+        .willRespondWith()
+        .status(HttpStatus.NOT_FOUND.value())
+        .body(USER_NOT_FOUND_RESPONSE)
+        .toPact();
+  }
+
   @Test
   @PactTestFor(pactMethod = "userAuthentication")
   void testUserAuthentication(MockServer mockServer) throws IOException {
@@ -253,7 +348,8 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
 
     // then
     assertEquals(HttpStatus.BAD_REQUEST.value(), httpResponse.getCode());
-    assertEquals(BAD_REQUEST_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+    assertEquals(USERNAME_BAD_REQUEST_RESPONSE,
+        IOUtils.toString(httpResponse.getEntity().getContent()));
 
   }
 
@@ -310,7 +406,8 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
 
     // then
     assertEquals(HttpStatus.BAD_REQUEST.value(), httpResponse.getCode());
-    assertEquals(BAD_REQUEST_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+    assertEquals(USERNAME_BAD_REQUEST_RESPONSE,
+        IOUtils.toString(httpResponse.getEntity().getContent()));
 
   }
 
@@ -368,8 +465,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
 
     // then
     assertEquals(HttpStatus.UNAUTHORIZED.value(), httpResponse.getCode());
-    assertEquals(MISSING_TOKEN_RESPONSE,
-        IOUtils.toString(httpResponse.getEntity().getContent()));
+    assertEquals(MISSING_TOKEN_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
 
   }
 
@@ -387,8 +483,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
 
     // then
     assertEquals(HttpStatus.FORBIDDEN.value(), httpResponse.getCode());
-    assertEquals(NOT_ALLOWED_RESPONSE,
-        IOUtils.toString(httpResponse.getEntity().getContent()));
+    assertEquals(NOT_ALLOWED_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
 
   }
 
@@ -406,8 +501,106 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
 
     // then
     assertEquals(HttpStatus.NOT_FOUND.value(), httpResponse.getCode());
-    assertEquals(USER_NOT_FOUND_RESPONSE,
+    assertEquals(USER_NOT_FOUND_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @PactTestFor(pactMethod = "addBalanceToUser")
+  void testAddBalanceToUser(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .post(mockServer.getUrl() + USERS_BASE_URL + "/" + ID + "/balance")
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, BEARER_TOKEN)
+        .bodyString(ADD_BALANCE_POST_BODY, ContentType.APPLICATION_JSON)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.OK.value(), httpResponse.getCode());
+    Map<String, Object> responseBody = this.objectMapper.readValue(
+        httpResponse.getEntity().getContent(), HashMap.class);
+    assertEquals(responseBody.get(ID_FIELD), ID);
+    assertEquals(responseBody.get(USERNAME_FIELD), USERNAME);
+    assertEquals(responseBody.get(BALANCE_FIELD), ADDED_BALANCE);
+
+  }
+
+  @Test
+  @PactTestFor(pactMethod = "addBalanceToUserWithInvalidBody")
+  void testAddBalanceToUserWithInvalidBody(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .post(mockServer.getUrl() + USERS_BASE_URL + "/" + ID + "/balance")
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, BEARER_TOKEN)
+        .bodyString(INVALID_ADD_BALANCE_POST_BODY, ContentType.APPLICATION_JSON)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.BAD_REQUEST.value(), httpResponse.getCode());
+    assertEquals(ADD_BALANCE_BAD_REQUEST_RESPONSE,
         IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @PactTestFor(pactMethod = "addBalanceToUserWithoutToken")
+  void testAddBalanceToUserWithoutToken(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .post(mockServer.getUrl() + USERS_BASE_URL + "/" + ID + "/balance")
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .bodyString(ADD_BALANCE_POST_BODY, ContentType.APPLICATION_JSON)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.UNAUTHORIZED.value(), httpResponse.getCode());
+    assertEquals(MISSING_TOKEN_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @PactTestFor(pactMethod = "addBalanceToOtherUser")
+  void testAddBalanceToDifferentUser(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .post(mockServer.getUrl() + USERS_BASE_URL + "/" + ID + "/balance")
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, BEARER_TOKEN)
+        .bodyString(ADD_BALANCE_POST_BODY, ContentType.APPLICATION_JSON)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.FORBIDDEN.value(), httpResponse.getCode());
+    assertEquals(NOT_ALLOWED_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @PactTestFor(pactMethod = "addBalanceToNonExistingUser")
+  void testAddBalanceToNonExistingUser(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .post(mockServer.getUrl() + USERS_BASE_URL + "/" + ID + "/balance")
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, BEARER_TOKEN)
+        .bodyString(ADD_BALANCE_POST_BODY, ContentType.APPLICATION_JSON)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.NOT_FOUND.value(), httpResponse.getCode());
+    assertEquals(USER_NOT_FOUND_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
 
   }
 

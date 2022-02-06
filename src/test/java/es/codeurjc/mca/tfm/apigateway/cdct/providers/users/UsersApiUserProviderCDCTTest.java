@@ -24,6 +24,8 @@ public class UsersApiUserProviderCDCTTest extends AbstractUsersApiBaseProviderCD
 
   private static Integer USER_ID = null;
 
+  private static Integer SECOND_USER_ID = null;
+
   private static String USER_TOKEN = null;
 
   private static String ADMIN_TOKEN = null;
@@ -64,13 +66,15 @@ public class UsersApiUserProviderCDCTTest extends AbstractUsersApiBaseProviderCD
       this.authenticateUser();
     }
 
-    Integer secondUserId = this.callCreateMethod(USERS_BASE_URL, "{"
-        + "  \"username\": \"alumno2@alumnos.urjc.es\","
-        + "  \"password\": \"P4ssword\""
-        + "}");
+    if (SECOND_USER_ID == null) {
+      SECOND_USER_ID = this.callCreateMethod(USERS_BASE_URL, "{"
+          + "  \"username\": \"alumno2@alumnos.urjc.es\","
+          + "  \"password\": \"P4ssword\""
+          + "}");
+    }
 
     return Map.of(TOKEN_FIELD, USER_TOKEN,
-        ID_FIELD, String.valueOf(secondUserId)
+        ID_FIELD, String.valueOf(SECOND_USER_ID)
     );
 
   }

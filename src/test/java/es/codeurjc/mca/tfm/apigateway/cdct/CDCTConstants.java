@@ -33,7 +33,7 @@ public class CDCTConstants {
       + "  \"password\": \"P4ssword\""
       + "}";
 
-  public static final String BAD_REQUEST_RESPONSE = "{"
+  public static final String USERNAME_BAD_REQUEST_RESPONSE = "{"
       + "  \"error\": \"Username must be a valid email\""
       + "}";
 
@@ -95,6 +95,14 @@ public class CDCTConstants {
 
   public static final String ADD_BALANCE_POST_BODY = "{\n"
       + "  \"amount\": " + ADDED_BALANCE + "\n"
+      + "}";
+
+  public static final String INVALID_ADD_BALANCE_POST_BODY = "{\n"
+      + "  \"amount\": 0\n"
+      + "}";
+
+  public static final String ADD_BALANCE_BAD_REQUEST_RESPONSE = "{\n"
+      + "  \"error\": \"Amount to add must be greater than 0\"\n"
       + "}";
 
   public static final Map<String, String> HEADERS = MapUtils.putAll(new HashMap<>(), new String[]{

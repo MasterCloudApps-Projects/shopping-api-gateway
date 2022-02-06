@@ -3,7 +3,7 @@ package es.codeurjc.mca.tfm.apigateway.cdct.consumers.users;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ADMINS_AUTH_URL;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ADMINS_BASE_URL;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ADMIN_ALREADY_EXISTS_RESPONSE;
-import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.BAD_REQUEST_RESPONSE;
+import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.USERNAME_BAD_REQUEST_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.CREATED_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.HEADERS;
 import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ID;
@@ -70,7 +70,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .path(ADMINS_AUTH_URL)
         .willRespondWith()
         .status(HttpStatus.BAD_REQUEST.value())
-        .body(BAD_REQUEST_RESPONSE)
+        .body(USERNAME_BAD_REQUEST_RESPONSE)
         .toPact();
   }
 
@@ -122,7 +122,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .body(INVALID_POST_BODY)
         .willRespondWith()
         .status(HttpStatus.BAD_REQUEST.value())
-        .body(BAD_REQUEST_RESPONSE)
+        .body(USERNAME_BAD_REQUEST_RESPONSE)
         .toPact();
   }
 
@@ -174,7 +174,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
 
     // then
     assertEquals(HttpStatus.BAD_REQUEST.value(), httpResponse.getCode());
-    assertEquals(BAD_REQUEST_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+    assertEquals(USERNAME_BAD_REQUEST_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
 
   }
 
@@ -231,7 +231,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
 
     // then
     assertEquals(HttpStatus.BAD_REQUEST.value(), httpResponse.getCode());
-    assertEquals(BAD_REQUEST_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+    assertEquals(USERNAME_BAD_REQUEST_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
 
   }
 
