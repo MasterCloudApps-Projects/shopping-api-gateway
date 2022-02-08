@@ -53,6 +53,7 @@ The next requirements are necessary to work with this project:
 * [Pact consumer](https://docs.pact.io/implementation_guides/jvm/consumer/junit5): JUnit 5 support for [Pact](https://docs.pact.io/) consumer tests (CDCT).
 * [Apache HttpClient](https://hc.apache.org/httpcomponents-client-4.5.x/index.html): HTTP agent implementation based on HttpCore used in tests to disable SSL.
 * [Testcontainers](https://www.testcontainers.org/): Java library that supports JUnit tests, providing lightweight, throwaway instances of common databases, Selenium web browsers, or anything else that can run in a Docker container.
+* [JUnit Platform Suite Engine](https://junit.org/junit5/docs/current/user-guide/#junit-platform-suite-engine): The JUnit Platform supports the declarative definition and execution of suites of tests from any test engine using the JUnit Platform.
 
 
 ## Project structure
@@ -105,6 +106,11 @@ mvn clean install
 To run tests execute:
 ```
 mvn test
+```
+
+#### CDCT Tests
+```
+mvn test -Pcdct
 ```
 
 ### Run application

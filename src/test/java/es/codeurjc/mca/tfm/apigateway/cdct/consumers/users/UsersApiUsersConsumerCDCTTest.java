@@ -49,11 +49,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 @PactTestFor(providerName = "UsersApiUserV1Provider", pactVersion = PactSpecVersion.V3)
+@DisplayName("Users API user resources consumer CDCT tests")
 public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerCDCTTest {
 
   private final ObjectMapper objectMapper = new ObjectMapper();
@@ -317,6 +319,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test user authentication")
   @PactTestFor(pactMethod = "userAuthentication")
   void testUserAuthentication(MockServer mockServer) throws IOException {
 
@@ -335,6 +338,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test user authentication with invalid username")
   @PactTestFor(pactMethod = "userAuthenticationWithInvalidBody")
   void testUserAuthenticationWithInvalidBody(MockServer mockServer) throws IOException {
 
@@ -354,6 +358,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test user authentication with invalid credentials")
   @PactTestFor(pactMethod = "userAuthenticationWithInvalidCredentials")
   void testUserAuthenticationWithInvalidCredentials(MockServer mockServer) throws IOException {
 
@@ -373,6 +378,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test user creation")
   @PactTestFor(pactMethod = "userCreation")
   void testUserCreation(MockServer mockServer) throws IOException {
 
@@ -393,6 +399,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test user creation with invalid username")
   @PactTestFor(pactMethod = "userCreationWithInvalidBody")
   void testUserCreationWithInvalidBody(MockServer mockServer) throws IOException {
 
@@ -412,6 +419,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test user creation when already exists a user with passed username")
   @PactTestFor(pactMethod = "userCreationWhenUsernameAlreadyExists")
   void testUserCreationWithAlreadyExistentUsername(MockServer mockServer) throws IOException {
 
@@ -431,6 +439,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test get user info")
   @PactTestFor(pactMethod = "getUserInfo")
   void testGetUserInfo(MockServer mockServer) throws IOException {
 
@@ -453,6 +462,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test get user info without token")
   @PactTestFor(pactMethod = "getUserInfoWithoutToken")
   void testGetUserInfoWithoutToken(MockServer mockServer) throws IOException {
 
@@ -470,6 +480,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test get info of a different user that authenticated one")
   @PactTestFor(pactMethod = "getUserInfoOfOtherUser")
   void testGetUserInfoOfOtherUser(MockServer mockServer) throws IOException {
 
@@ -488,6 +499,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test get info of a non existin user")
   @PactTestFor(pactMethod = "getUserInfoOfNonExistingUser")
   void testGetUserInfoOfNonExistingUser(MockServer mockServer) throws IOException {
 
@@ -506,6 +518,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test add balance to user")
   @PactTestFor(pactMethod = "addBalanceToUser")
   void testAddBalanceToUser(MockServer mockServer) throws IOException {
 
@@ -529,6 +542,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test add balance to user with invalid amount")
   @PactTestFor(pactMethod = "addBalanceToUserWithInvalidBody")
   void testAddBalanceToUserWithInvalidBody(MockServer mockServer) throws IOException {
 
@@ -549,6 +563,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test add balance to user without token")
   @PactTestFor(pactMethod = "addBalanceToUserWithoutToken")
   void testAddBalanceToUserWithoutToken(MockServer mockServer) throws IOException {
 
@@ -567,6 +582,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test add balance to a different user that authenticated one")
   @PactTestFor(pactMethod = "addBalanceToOtherUser")
   void testAddBalanceToDifferentUser(MockServer mockServer) throws IOException {
 
@@ -586,6 +602,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test add balance to a non existing user")
   @PactTestFor(pactMethod = "addBalanceToNonExistingUser")
   void testAddBalanceToNonExistingUser(MockServer mockServer) throws IOException {
 

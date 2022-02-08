@@ -17,9 +17,11 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.junit.jupiter.api.DisplayName;
 import org.springframework.http.HttpStatus;
 
 @Provider("UsersApiUserV1Provider")
+@DisplayName("Users API user resources provider CDCT tests")
 public class UsersApiUserProviderCDCTTest extends AbstractUsersApiBaseProviderCDCTTest {
 
   private static Integer USER_ID = null;

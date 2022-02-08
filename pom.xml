@@ -22,6 +22,7 @@
     <pact.version>4.3.4</pact.version>
     <apache.httpclient>4.5.13</apache.httpclient>
     <testcontainers.version>1.16.3</testcontainers.version>
+    <junit-platform-suite.version>1.8.2</junit-platform-suite.version>
   </properties>
   <dependencies>
     <dependency>
@@ -74,6 +75,20 @@
       <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-suite-api</artifactId>
+      <version>${junit-platform-suite.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-suite-engine</artifactId>
+      <version>${junit-platform-suite.version}</version>
+    </dependency>
+
 
   </dependencies>
   <dependencyManagement>
@@ -160,5 +175,25 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>cdct</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven-surefire-plugin.version}</version>
+            <configuration>
+              <groups>ConsumerCDCTTest,ProviderCDCTTest</groups>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

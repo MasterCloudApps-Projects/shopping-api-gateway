@@ -32,13 +32,14 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 
 @PactTestFor(providerName = "UsersApiAdminV1Provider", pactVersion = PactSpecVersion.V3)
-
+@DisplayName("Users API admin resources consumer CDCT tests")
 public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerCDCTTest {
 
   @Pact(consumer = "UsersApiAdminV1Consumer")
@@ -143,6 +144,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test admin authentication")
   @PactTestFor(pactMethod = "adminAuthentication")
   void testAdminAuthentication(MockServer mockServer) throws IOException {
 
@@ -161,6 +163,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test admin authentication with invalid username")
   @PactTestFor(pactMethod = "adminAuthenticationWithInvalidBody")
   void testAdminAuthenticationWithInvalidBody(MockServer mockServer) throws IOException {
 
@@ -179,6 +182,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test admin authentication with invalid credentials")
   @PactTestFor(pactMethod = "adminAuthenticationWithInvalidCredentials")
   void testAdminAuthenticationWithInvalidCredentials(MockServer mockServer) throws IOException {
 
@@ -198,6 +202,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test admin creation")
   @PactTestFor(pactMethod = "adminCreation")
   void testAdminCreation(MockServer mockServer) throws IOException {
 
@@ -218,6 +223,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test admin creation with invalid username")
   @PactTestFor(pactMethod = "adminCreationWithInvalidBody")
   void testAdminCreationWithInvalidBody(MockServer mockServer) throws IOException {
 
@@ -236,6 +242,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
+  @DisplayName("Test admin creation with an already existent username")
   @PactTestFor(pactMethod = "adminCreationWhenUsernameAlreadyExists")
   void testAdminCreationWithAlreadyExistentUsername(MockServer mockServer) throws IOException {
 

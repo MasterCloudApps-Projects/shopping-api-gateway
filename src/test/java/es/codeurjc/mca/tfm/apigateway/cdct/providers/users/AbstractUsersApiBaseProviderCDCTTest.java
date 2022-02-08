@@ -35,6 +35,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContexts;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,6 +51,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 @PactFolder("target/pacts")
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("test")
+@Tag("ProviderCDCTTest")
 public abstract class AbstractUsersApiBaseProviderCDCTTest {
 
   public static final String MYSQL_SERVICE_NAME = "mysql_1";
