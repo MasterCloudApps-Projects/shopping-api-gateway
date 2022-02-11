@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class UserApiConfiguration {
 
+  private static final String LOCATION_HEADER = "Location";
+
   @Value("${users.url}")
   private String usersUrl;
 
@@ -40,8 +42,11 @@ public class UserApiConfiguration {
             .path("/admins/**")
             .filters(f -> f
                 .prefixPath(backendUri.getPath())
-                .rewriteLocationResponseHeader(NEVER_STRIP.name(), "Location", null, "http|https")
-                .rewriteResponseHeader("Location", backendUri.getPath(), ""))
+                .rewriteLocationResponseHeader(NEVER_STRIP.name(),
+                    LOCATION_HEADER,
+                    null,
+                    "http|https")
+                .rewriteResponseHeader(LOCATION_HEADER, backendUri.getPath(), ""))
             .uri(this.usersUrl))
         .build();
   }

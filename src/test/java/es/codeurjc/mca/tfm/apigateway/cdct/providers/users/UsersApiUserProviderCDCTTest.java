@@ -1,11 +1,11 @@
 package es.codeurjc.mca.tfm.apigateway.cdct.providers.users;
 
-import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ADMINS_AUTH_URL;
-import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.AUTH_URL;
-import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.ID_FIELD;
-import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.TOKEN_FIELD;
-import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.USERS_BASE_URL;
-import static es.codeurjc.mca.tfm.apigateway.cdct.CDCTConstants.VALID_CREDENTIALS_POST_BODY;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.ADMINS_AUTH_URL;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.AUTH_URL;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.ID_FIELD;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.TOKEN_FIELD;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.USERS_BASE_URL;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.VALID_CREDENTIALS_POST_BODY;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 

@@ -1,4 +1,4 @@
-package es.codeurjc.mca.tfm.apigateway.cdct;
+package es.codeurjc.mca.tfm.apigateway;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 
-public class CDCTConstants {
+public class TestConstants {
 
   public static final String AUTH_URL = "/auth";
 

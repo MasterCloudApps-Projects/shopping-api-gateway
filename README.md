@@ -54,6 +54,7 @@ The next requirements are necessary to work with this project:
 * [Apache HttpClient](https://hc.apache.org/httpcomponents-client-4.5.x/index.html): HTTP agent implementation based on HttpCore used in tests to disable SSL.
 * [Testcontainers](https://www.testcontainers.org/): Java library that supports JUnit tests, providing lightweight, throwaway instances of common databases, Selenium web browsers, or anything else that can run in a Docker container.
 * [JUnit Platform Suite Engine](https://junit.org/junit5/docs/current/user-guide/#junit-platform-suite-engine): The JUnit Platform supports the declarative definition and execution of suites of tests from any test engine using the JUnit Platform.
+* [Spring Cloud Contract WireMock](https://docs.spring.io/spring-cloud-contract/docs/3.0.0-SNAPSHOT/reference/htmlsingle/#features-wiremock): Modules giving you the possibility to use [WireMock](http://wiremock.org/) with different servers by using the "ambient" server embedded in a Spring Boot application.
 
 
 ## Project structure
@@ -81,6 +82,8 @@ Project is composed by the next modules:
                 * **providers**: CDCT providers tests. These tests check contract against providers images.
                   * **users**: users API CDCT provider tests.
                     * **AbstractUsersApiBaseProviderCDCTTest.java**: Abstract class that launch [src/test/resources/users-docker-compose-test.yml](src/test/resources/users-docker-compose-test.yml) to run necessary docker images.
+              * **unit**: contains unit tests.
+                * **users**: users API route configuration unit tests. 
       * **resources**: application test resources.
         * **application-test.yml**: application properties for testing configuration.
         * **users-docker-compose-test.yml**: users API docker compose file for testing purposes without volumes.
@@ -106,6 +109,11 @@ mvn clean install
 To run tests execute:
 ```
 mvn test
+```
+
+#### Unit Tests
+```
+mvn test -Punit
 ```
 
 #### CDCT Tests
