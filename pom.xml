@@ -145,10 +145,10 @@
               <hooks>
                 <pre-commit>
                   mvn checkstyle:check
-                  mvn test
+                  mvn test -Punit
                 </pre-commit>
                 <pre-push>
-                  echo "Validating in pre-push..."
+                  mvn test -Pcdct
                 </pre-push>
               </hooks>
             </configuration>
