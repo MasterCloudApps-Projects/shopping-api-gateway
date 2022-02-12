@@ -149,6 +149,7 @@
                 </pre-commit>
                 <pre-push>
                   mvn test -Pcdct
+                  mvn test -Pit
                 </pre-push>
               </hooks>
             </configuration>
@@ -194,7 +195,7 @@
             <version>${maven-surefire-plugin.version}</version>
             <configuration>
               <groups>ConsumerCDCTTest,ProviderCDCTTest</groups>
-              <excludedGroups>UnitTest</excludedGroups>
+              <excludedGroups>UnitTest,IntegrationTest</excludedGroups>
             </configuration>
           </plugin>
         </plugins>
@@ -212,7 +213,25 @@
             <version>${maven-surefire-plugin.version}</version>
             <configuration>
               <groups>UnitTest</groups>
-              <excludedGroups>ConsumerCDCTTest,ProviderCDCTTest</excludedGroups>
+              <excludedGroups>ConsumerCDCTTest,ProviderCDCTTest,IntegrationTest</excludedGroups>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>it</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven-surefire-plugin.version}</version>
+            <configuration>
+              <groups>IntegrationTest</groups>
+              <excludedGroups>UnitTest,ConsumerCDCTTest,ProviderCDCTTest</excludedGroups>
             </configuration>
           </plugin>
         </plugins>

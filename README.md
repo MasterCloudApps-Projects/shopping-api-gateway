@@ -82,11 +82,14 @@ Project is composed by the next modules:
                 * **providers**: CDCT providers tests. These tests check contract against providers images.
                   * **users**: users API CDCT provider tests.
                     * **AbstractUsersApiBaseProviderCDCTTest.java**: Abstract class that launch [src/test/resources/users-docker-compose-test.yml](src/test/resources/users-docker-compose-test.yml) to run necessary docker images.
+              * **integration**: contains integration tests.
+                * **users**: users API integration tests.
+              * **testcontainers**: contains base class with testcontainers config that launch [docker-compose-test](src/test/resources/docker-compose-test.yml) file.
               * **unit**: contains unit tests.
                 * **users**: users API route configuration unit tests. 
       * **resources**: application test resources.
         * **application-test.yml**: application properties for testing configuration.
-        * **users-docker-compose-test.yml**: users API docker compose file for testing purposes without volumes.
+        * **docker-compose-test.yml**: docker compose file for testing purposes without volumes.
 * **LICENSE**: Apache 2 license file.
 * **pom.xml**: file that contains information about the project and configuration details used by Maven to build the project.
 * **README.md**: this file.
@@ -111,12 +114,17 @@ To run tests execute:
 mvn test
 ```
 
-#### Unit Tests
+#### Run Unit Tests
 ```
 mvn test -Punit
 ```
 
-#### CDCT Tests
+#### Run Integration Tests
+```
+mvn test -Pit
+```
+
+#### Run CDCT Tests
 ```
 mvn test -Pcdct
 ```
@@ -150,7 +158,7 @@ To contribute to this project have in mind:
 2. In order to ensure the right style and code conventions, and that code to commit and push is ok, this project use __pre-commit and pre-push git hooks__.
    This is implemented using [githook-maven-plugin](https://mvnrepository.com/artifact/io.github.phillipuniverse/githook-maven-plugin/1.0.5).
     * **pre-commit:** This hook run [maven-checkstyle-plugin](https://maven.apache.org/plugins/maven-checkstyle-plugin/) and unit tests, and if fails, changes can't be committed.
-    * **pre-push:** This hook run CDCT tests, and if fails, commits can't be pushed. 
+    * **pre-push:** This hook run CDCT adn integrations tests, and if fails, commits can't be pushed. 
 4. The API First approach was used, so please, if is necessary to modify API, in first place you must modify and validate [openapi definition](./api/openapi.yml), and later, perform the code changes.
 5. Every code you modify or add must have a test that check the right behaviour of it (As a future task we'll add sonar to ensure there is a minimum coverage).
 

@@ -12,12 +12,11 @@ import au.com.dius.pact.provider.junit5.PactVerificationContext;
 import au.com.dius.pact.provider.junit5.PactVerificationInvocationContextProvider;
 import au.com.dius.pact.provider.junitsupport.loader.PactFolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
+import es.codeurjc.mca.tfm.apigateway.testcontainers.TestContainersBase;
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.net.ssl.SSLContext;
@@ -44,37 +43,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.containers.DockerComposeContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
 
 @ExtendWith(SpringExtension.class)
 @PactFolder("target/pacts")
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("test")
 @Tag("ProviderCDCTTest")
-public abstract class AbstractUsersApiBaseProviderCDCTTest {
-
-  public static final String MYSQL_SERVICE_NAME = "mysql_1";
-
-  public static final int MYSQL_PORT = 3306;
-
-  public static final String USERS_SERVICE_NAME = "users_1";
-
-  public static final int USERS_PORT = 8443;
-
-  protected static final DockerComposeContainer ENVIRONMENT;
+public abstract class AbstractUsersApiBaseProviderCDCTTest extends TestContainersBase {
 
   protected static Integer ADMIN_ID = null;
-
-  static {
-    ENVIRONMENT =
-        new DockerComposeContainer(new File("src/test/resources/users-docker-compose-test.yml"))
-            .withExposedService(MYSQL_SERVICE_NAME, MYSQL_PORT,
-                Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)))
-            .withExposedService(USERS_SERVICE_NAME, USERS_PORT,
-                Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(60)));
-    ENVIRONMENT.start();
-  }
 
   @Value("${users.url}")
   protected String usersUrl;
