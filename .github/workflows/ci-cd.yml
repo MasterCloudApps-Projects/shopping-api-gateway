@@ -34,12 +34,16 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
+      - name: Clean
+        run: mvn clean
       - name: Run unit tests
-        run: mvn clean test -Punit
+        run: mvn test -Punit
       - name: Run integration tests
-        run: mvn clean test -Pit
-      - name: Run CDCT tests
-        run: mvn clean test -Pcdct
+        run: mvn test -Pit
+      - name: Run CDCT consumer tests and generate CDCT contracts
+        run: mvn test -PcdctConsumer
+      - name: Run CDCT provider tests
+        run: mvn test -PcdctProvider
   publish-image:
     needs: [ tests ]
     name: Publish Docker image

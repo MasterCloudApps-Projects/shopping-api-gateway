@@ -192,6 +192,42 @@
 
   <profiles>
     <profile>
+      <id>cdctConsumer</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven-surefire-plugin.version}</version>
+            <configuration>
+              <groups>ConsumerCDCTTest</groups>
+              <excludedGroups>UnitTest,IntegrationTest,ProviderCDCTTest</excludedGroups>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>cdctProvider</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven-surefire-plugin.version}</version>
+            <configuration>
+              <groups>ProviderCDCTTest</groups>
+              <excludedGroups>UnitTest,IntegrationTest,ConsumerCDCTTest</excludedGroups>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>cdct</id>
       <activation>
         <activeByDefault>false</activeByDefault>
