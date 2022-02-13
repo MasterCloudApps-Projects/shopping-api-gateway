@@ -188,6 +188,9 @@ This project has two available environments:
 
 The mechanism used to deploy the application in any of the previous environment is via github actions, that are defined in workflows in folder [.github/workflows](.github/workflows).
 ### PRE
+When a push is done on remote branch (or a PR), github actions jobs defined in [ci-cd.yml](.github/workflows/ci-cd.yml) will be fired. All the jobs depends o the previous one, so if one of them fails, the project won't be deployed in the PRE environment:
+* **install**: Check style errors, run unitary, integration, and CDCT tests in the branch, and if there is any error fails.
+* **publish-image**: Publish Docker image `tfm-apigw` with tag `trunk` in [Dockerhub](https://hub.docker.com/).
 > TODO
 
 ### PRO

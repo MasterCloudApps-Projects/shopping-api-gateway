@@ -1,0 +1,44 @@
+name: Api Gateway CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  install:
+    name:  Install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'main'
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: maven
+      - name: Maven install
+        run: mvn clean install
+  publish-image:
+    needs: [ install ]
+    name: Publish Docker image
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: tfm-apigw
+      IMAGE_TRUNK_TAG: trunk
+      REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'main'
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: maven
+      - name: Create and publish docker image
+        run: mvn jib:build -Dimage=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TRUNK_TAG }}
+
