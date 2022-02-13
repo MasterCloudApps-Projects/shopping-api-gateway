@@ -7,8 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  install:
-    name:  Install
+  checkstyle:
+    name:  Analyzes source code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,10 +19,29 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
-      - name: Maven install
-        run: mvn clean install
+      - name: Maven checkstyle
+        run: mvn checkstyle:check
+  tests:
+    needs: [ checkstyle ]
+    name: Run unitary, integration and CDCT tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'main'
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: maven
+      - name: Run unit tests
+        run: mvn clean test -Punit
+      - name: Run integration tests
+        run: mvn clean test -Pit
+      - name: Run CDCT tests
+        run: mvn clean test -Pcdct
   publish-image:
-    needs: [ install ]
+    needs: [ tests ]
     name: Publish Docker image
     runs-on: ubuntu-latest
     env:
