@@ -63,5 +63,5 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Create and publish docker image
-        run: mvn jib:build -Dimage=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TRUNK_TAG }}
+        run: mvn compile jib:build -Dimage=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TRUNK_TAG }}
 
