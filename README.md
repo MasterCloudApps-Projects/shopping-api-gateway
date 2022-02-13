@@ -55,6 +55,7 @@ The next requirements are necessary to work with this project:
 * [Testcontainers](https://www.testcontainers.org/): Java library that supports JUnit tests, providing lightweight, throwaway instances of common databases, Selenium web browsers, or anything else that can run in a Docker container.
 * [JUnit Platform Suite Engine](https://junit.org/junit5/docs/current/user-guide/#junit-platform-suite-engine): The JUnit Platform supports the declarative definition and execution of suites of tests from any test engine using the JUnit Platform.
 * [Spring Cloud Contract WireMock](https://docs.spring.io/spring-cloud-contract/docs/3.0.0-SNAPSHOT/reference/htmlsingle/#features-wiremock): Modules giving you the possibility to use [WireMock](http://wiremock.org/) with different servers by using the "ambient" server embedded in a Spring Boot application.
+* [Jib Maven Plugin](https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin): Jib is a Maven plugin for building Docker and OCI images for your Java applications.
 
 
 ## Project structure
@@ -62,7 +63,9 @@ Project is composed by the next modules:
 * **api**: [openapi](https://swagger.io/specification/) definition with REST endpoints.
 * **checkstyle**: contains project style for IDE plugin.
 * **docker**: contains docker files
+  * **docker-compose.yml**: allows to launch the app and its necessary resources in local (MySQL database, users API and apigateway).
   * **docker-compose-dev.yml**: allows to launch the necessary resources to run the app in local (MySQL database, and users API).
+  * **dockerize.sh**: script that build an app docker local image and to run it as a docker container.
 * **postman**: postman collection and environments configuration.
 * **src**: source code.
     * **main**:
@@ -147,10 +150,24 @@ To run application locally:
     ```
 
 #### As docker container
-> No docker configuration defined yet
+To run application in a docker container execute:
+```
+cd docker
+./dockerize.sh
+```
+Note: to stop application in container when not necessary then run:
+```
+cd docker
+docker-compose down
+```
 
 #### Checking application is running
-> TODO
+In both cases, [locally](#locally) and [As docker container](#as-docker-container) you can use [openapi definition](./api/openapi.yml) or [Postman collection](./postman/API Gateway.postman_collection.json) to test running application.
+
+* **Openapi**: open `openapi.yml` content in [swagger editor](https://editor.swagger.io/) and select `localhost` server and execute endpoints you want.
+* **Postman**: select `TFM-apigw-local-env` environment variable. Execute postman collection:
+    * **Manually**: Set values you want in the endpoint body and run it.
+    * **Automatically**: Set values to `userUsername` and `adminUsername` variables, and execute [Postman Collection Runner](https://learning.postman.com/docs/running-collections/intro-to-collection-runs/).
 
 ## Contributing
 To contribute to this project have in mind:
