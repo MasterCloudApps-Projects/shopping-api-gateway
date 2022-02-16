@@ -1,0 +1,33 @@
+# Default values for API Gateway.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# K8s namespace
+namespace: tfm-dev-amartinm82
+
+# users API
+users:
+  release: users-develop
+  port: 3443
+
+# security context
+securityContext:
+  runAsUser: 1001
+
+replicaCount: 1
+
+image:
+  repository: amartinm82/tfm-apigw
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 8444
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"

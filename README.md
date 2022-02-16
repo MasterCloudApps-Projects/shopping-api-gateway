@@ -192,7 +192,9 @@ When a push is done on remote branch (or a PR), github actions jobs defined in [
 * **checkstyle**: Analyzes source code in the branch, if exists style errors fails.
 * **tests**: run unitary, integration, and CDCT tests in the branch, and if there is any error, fails.
 * **publish-image**: Publish Docker image `tfm-apigw` with tag `trunk` in [Dockerhub](https://hub.docker.com/).
-> TODO
+* **deploy**: Deploy the previous generated image in PRE k8s cluster. For this, it uses the helm chart defined in [helm/charts](./helm/charts/) folder.
+
+So, when we push in the main branch, because of the action execution, it results in if our code is right formatted, and works because it pass the tests, it is deployed and running on a k8s cluster of PRE environment.
 
 ### PRO
 > TODO

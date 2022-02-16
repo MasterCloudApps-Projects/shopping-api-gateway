@@ -64,4 +64,23 @@ jobs:
           cache: maven
       - name: Create and publish docker image
         run: mvn compile jib:build -Dimage=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TRUNK_TAG }}
-
+  deploy:
+    needs: [ publish-image ]
+    name: Deploy in k8s
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'main'
+      - name: Helm Deploy
+        uses: vimeda/helm@v1.6.8
+        with:
+          release: 'apigw-develop'
+          namespace: 'tfm-dev-amartinm82'
+          chart: './helm/charts'
+          values: |
+            image:
+              tag: trunk
+          helm: helm3
+        env:
+          KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'

@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apigw-ingress
+  namespace: tfm-dev-amartinm82
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  rules:
+  - host: apigw-tfm-dev-amartinm82.cloud.okteto.net
+    http:
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: apigw-service
+              port:
+                number: 8444
