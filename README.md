@@ -181,8 +181,8 @@ To contribute to this project have in mind:
 
 ## Deployment
 This project has two available environments:
-* Preproduction (PRE): Used to test the application previously to release it in a productive environment. 
-  > TODO add PRE URL
+* Preproduction (PRE): Used to test the application previously to release it in a productive environment.
+  This environment is accessible in the URL https://apigw-tfm-dev-amartinm82.cloud.okteto.net
 * Production (PRO): productive environment. 
   > TODO add PRO URL
 
@@ -200,8 +200,11 @@ So, when we push in the main branch, because of the action execution, it results
 > TODO
 
 ### Checking application is deployed
-> TODO
-> 
+Like in [Usage > Run application > Checking application is running](#checking-application-is-running) you can check if the application is successfully deployed using Openapi definition or Postman collection.
+* **Openapi**: open `openapi.yml` content in [swagger editor](https://editor.swagger.io/) and select https://apigw-tfm-dev-amartinm82.cloud.okteto.net server and execute endpoints you want.
+* **Postman**: select `TFM-apigw-pre-env` environment variable. Execute postman collection as described in [Usage > Run application > Checking application is running](#checking-application-is-running).
+>TODO Add PRO url and environment variable
+
 ## Developers
 This project was developed by:
 
