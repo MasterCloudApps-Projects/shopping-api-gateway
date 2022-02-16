@@ -1,0 +1,126 @@
+name: Users RELEASE
+
+on:
+  push:
+    tags: [ '*' ]
+
+jobs:
+  check-tag:
+    name: Check tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout source code'
+        uses: actions/checkout@v2
+        with:
+          ref: 'main'
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: maven
+      - name: get-npm-version
+        id: package_version
+        run: echo ::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+      - name: Check tag name
+        uses: actions/github-script@v5
+        with:
+          script: |
+            console.log('${{ github.ref_name }}')
+            console.log('${{ steps.package_version.outputs.version }}')
+            if (${{ github.ref_name != steps.package_version.outputs.version }}) {
+              core.setFailed('Tag does not match with package version')
+            }
+
+  publish-package:
+    needs: [ check-tag ]
+    name: Publish package on  Github
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: 'Checkout source code'
+        uses: actions/checkout@v2
+        with:
+          ref: 'main'
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - name: Publish package
+        run: mvn --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+  publish-release:
+    needs: [ publish-package ]
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout source code'
+        uses: actions/checkout@v2
+        with:
+          ref: 'main'
+      - name: 'Build Changelog'
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: ${{steps.github_release.outputs.changelog}}
+          draft: false
+          prerelease: false
+
+  publish-image:
+    needs: [ publish-release ]
+    name: Publish Docker image
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: tfm-apigw
+      IMAGE_LATEST_TAG: latest
+      REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'main'
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: maven
+      - name: Create and publish docker image
+        run: mvn compile jib:build -Dimage=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }} -Djib.to.tags=${{ github.ref_name }},${{ env.IMAGE_LATEST_TAG }}
+
+  deploy:
+    needs: [ publish-image ]
+    name: Deploy in k8s
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout source code'
+        uses: actions/checkout@v2
+        with:
+          ref: 'main'
+      - name: Helm Deploy
+        uses: vimeda/helm@v1.6.8
+        with:
+          release: 'apigw-production'
+          namespace: 'tfm-amartinm82'
+          chart: './helm/charts'
+          values: |
+            namespace: tfm-amartinm82
+            image:
+              tag: ${{ github.ref_name }}
+            users:
+              release: users-production
+          helm: helm3
+        env:
+          KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
+

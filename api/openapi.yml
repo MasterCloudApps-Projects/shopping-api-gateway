@@ -6,6 +6,7 @@ info:
 servers:
   - url: https://localhost:8444
   - url: https://apigw-tfm-dev-amartinm82.cloud.okteto.net
+  - url: https://apigw-tfm-amartinm82.cloud.okteto.net
 paths:
   /admins/auth:
     post:

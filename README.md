@@ -56,6 +56,7 @@ The next requirements are necessary to work with this project:
 * [JUnit Platform Suite Engine](https://junit.org/junit5/docs/current/user-guide/#junit-platform-suite-engine): The JUnit Platform supports the declarative definition and execution of suites of tests from any test engine using the JUnit Platform.
 * [Spring Cloud Contract WireMock](https://docs.spring.io/spring-cloud-contract/docs/3.0.0-SNAPSHOT/reference/htmlsingle/#features-wiremock): Modules giving you the possibility to use [WireMock](http://wiremock.org/) with different servers by using the "ambient" server embedded in a Spring Boot application.
 * [Jib Maven Plugin](https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin): Jib is a Maven plugin for building Docker and OCI images for your Java applications.
+* [Maven Release Plugin](https://maven.apache.org/maven-release/maven-release-plugin/index.html):This plugin is used to release a project with Maven, saving a lot of repetitive, manual work.
 
 
 ## Project structure
@@ -182,9 +183,8 @@ To contribute to this project have in mind:
 ## Deployment
 This project has two available environments:
 * Preproduction (PRE): Used to test the application previously to release it in a productive environment.
-  This environment is accessible in the URL https://apigw-tfm-dev-amartinm82.cloud.okteto.net
-* Production (PRO): productive environment. 
-  > TODO add PRO URL
+  This environment is accessible in the URL https://apigw-tfm-dev-amartinm82.cloud.okteto.net.
+* Production (PRO): productive environment. Accesible in URL https://apigw-tfm-amartinm82.cloud.okteto.net.
 
 The mechanism used to deploy the application in any of the previous environment is via github actions, that are defined in workflows in folder [.github/workflows](.github/workflows).
 ### PRE
@@ -197,13 +197,23 @@ When a push is done on remote branch (or a PR), github actions jobs defined in [
 So, when we push in the main branch, because of the action execution, it results in if our code is right formatted, and works because it pass the tests, it is deployed and running on a k8s cluster of PRE environment.
 
 ### PRO
-> TODO
+To deploy in PRO environment is necessary to generate a new release. To do that, execute:
+```
+mvn -Dusername=<git__user> release:prepare
+```    
+It will tag the source code with the current version of [pom.xml](./pom.xml), push tag in remote repository, and bump project version (for detail see [Maven Release Plugin phases](https://maven.apache.org/maven-release/maven-release-plugin/examples/prepare-release.html))).
+
+Due to the new tag is pushed, the workflow defined in [release.yml](.github/workflows/release.yml) is executed. It has several jobs:
+* **check-tag**: Verifies if pushed tag match with package version (to avoid manually tags creation).
+* **publish-package**: Depends on previous job. Publish mvn package version in github packages repository.
+* **publish-release**: Depends on previous job. Publish the release in github.
+* **publish-image**: Depends on previous job. Generate docker image of app, tagging it with `latest` and  `{pushed_tag}` (i.e: if we generated the tag 1.2.0. it tag the new image with 1.2.0), and publishing them in [Dockerhub](https://hub.docker.com/).
+* **deploy**: Depends on previous job. It deploys application in PRO k8s cluster using `{pushed_tag}` image. For this, it uses the helm chart defined in [helm/charts](./helm/charts/) folder.
 
 ### Checking application is deployed
 Like in [Usage > Run application > Checking application is running](#checking-application-is-running) you can check if the application is successfully deployed using Openapi definition or Postman collection.
-* **Openapi**: open `openapi.yml` content in [swagger editor](https://editor.swagger.io/) and select https://apigw-tfm-dev-amartinm82.cloud.okteto.net server and execute endpoints you want.
-* **Postman**: select `TFM-apigw-pre-env` environment variable. Execute postman collection as described in [Usage > Run application > Checking application is running](#checking-application-is-running).
->TODO Add PRO url and environment variable
+* **Openapi**: open `openapi.yml` content in [swagger editor](https://editor.swagger.io/) and select https://apigw-tfm-dev-amartinm82.cloud.okteto.net or https://apigw-tfm-amartinm82.cloud.okteto.net server and execute endpoints you want.
+* **Postman**: select `TFM-apigw-pre-env` or `TFM-apigw-pro-env` environment variable. Execute postman collection as described in [Usage > Run application > Checking application is running](#checking-application-is-running).
 
 ## Developers
 This project was developed by:
