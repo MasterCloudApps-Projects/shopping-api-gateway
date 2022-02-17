@@ -1,4 +1,4 @@
-name: Users RELEASE
+name: API Gateway RELEASE
 
 on:
   push:
