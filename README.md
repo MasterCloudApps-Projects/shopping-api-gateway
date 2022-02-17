@@ -61,6 +61,7 @@ The next requirements are necessary to work with this project:
 
 ## Project structure
 Project is composed by the next modules:
+* **.github/workflows**: contains workflows for [github actions](https://docs.github.com/en/actions)
 * **api**: [openapi](https://swagger.io/specification/) definition with REST endpoints.
 * **checkstyle**: contains project style for IDE plugin.
 * **docker**: contains docker files
@@ -102,7 +103,31 @@ Project is composed by the next modules:
 Project configuration is in [src/main/resources/application.yml](./src/main/resources/application.yml) file.
 
 ### Properties description
-> No properties defined yet.
+* **users.url**: Users API url.
+
+* **server.ssl.key-store-password**: Server key store
+* **server.ssl.key-store**: Server key store path.
+* **server.port**: Port where the app will run. Default value is `8444`.
+
+Furthermore, you can use any of the [Spring Cloud properties](https://cloud.spring.io/spring-cloud-gateway/reference/html/appendix.html).
+**NOTE:** Currently the property `spring.cloud.gateway.httpclient.ssl.useInsecureTrustManager` is enabled. So gateway trust all downstream certificates.
+This is not suitable for production, and should be fixed in next steps. 
+
+### Helm chart configurable values
+The next variables are defined to use helm chart in [helm/charts/values.yaml](./helm/charts/values.yaml):
+* **namespace**: K8s namespace. By default `tfm-dev-amartinm82`.
+* **users.release**: Users API deployed release (necessary to know the user-service to use in k8s cluster). By default `users-develop`.
+* **users.port**: Users API port. By default `3443`.
+* **securityContext.runAsUser**: user which run the app in container. By default `1001`.
+* **replicaCount**: number of replicas for the app. By default `1`.
+* **image.repository**: app image name. By default `amartinm82/tfm-apigw`.
+* **image.tag**: app image tag. By default `latest`.
+* **service.type**: app service type. By default `ClusterIP`.
+* **service.port**: app port. By default `3443`.
+* **resources.requests.memory**: app instance requested memory. By default `256Mi`.
+* **resources.requests.cpu**: app instance requested cpu. By default `250m`.
+* **resources.limits.memory**: app instance limit memory. By default `512Mi`.
+* **resources.limits.cpu**: app instance requested cpu. By default `500m`.
 
 ## Usage
 
@@ -199,7 +224,7 @@ So, when we push in the main branch, because of the action execution, it results
 ### PRO
 To deploy in PRO environment is necessary to generate a new release. To do that, execute:
 ```
-mvn -Dusername=<git__user> release:prepare
+mvn -Dusername=<git_user> release:prepare
 ```    
 It will tag the source code with the current version of [pom.xml](./pom.xml), push tag in remote repository, and bump project version (for detail see [Maven Release Plugin phases](https://maven.apache.org/maven-release/maven-release-plugin/examples/prepare-release.html))).
 
