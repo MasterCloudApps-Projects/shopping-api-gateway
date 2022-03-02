@@ -111,5 +111,21 @@ public class TestConstants {
 
   public static final String LOCATION_HEADER = "Location";
 
+  public static final String PRODUCTS_BASE_URL = "/products";
+
+  public static final String PRODUCT_NAME = "shoes";
+
+  public static final String PRODUCT_DESCRIPTION = "comfortable shoes";
+
+  public static final double PRODUCT_PRICE = 29.99;
+
+  public static final double PRODUCT_QUANTITY = 20;
+
+  public static final String VALID_PRODUCT_POST_BODY = "{\n"
+      + "  \"name\": \"SHOES\",\n"
+      + "  \"description\": \"COMFORTABLE SHOES\",\n"
+      + "  \"price\": 29.99,\n"
+      + "  \"quantity\": 20\n"
+      + "}";
 
 }

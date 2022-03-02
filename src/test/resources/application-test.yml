@@ -1,6 +1,9 @@
 users:
   url: https://${DOCKER_HOST_IP:localhost}:8443/api/v1
 
+products:
+  url: https://${DOCKER_HOST_IP:localhost}:3445/api/v1
+
 spring:
   config:
     activate:

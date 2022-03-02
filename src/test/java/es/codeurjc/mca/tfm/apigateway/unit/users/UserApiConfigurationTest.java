@@ -196,6 +196,7 @@ public class UserApiConfigurationTest {
   }
 
   @Test
+  @DisplayName("Test admins path that returns a Location header route to users API admins resources and returns a Location header")
   public void givenARequestWhenIsAdminsPathAndReturnsLocationHeaderThenShouldRouteToUsersApiAdminResourceAndResponseWithoutLocationHeader() {
 
     //Stubs
