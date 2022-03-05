@@ -61,7 +61,7 @@ paths:
               description: URL to get the newly-created admin.
               schema:
                 type: string
-                example: https://localhost:8443/v1/admins/1
+                example: https://localhost:8444/admins/1
           content:
             application/json:
               schema:
@@ -139,7 +139,7 @@ paths:
               description: URL to get the newly-created user.
               schema:
                 type: string
-                example: https://localhost:8443/v1/users/1
+                example: https://localhost:8444/users/1
           content:
             application/json:
               schema:
@@ -272,6 +272,190 @@ paths:
                 error: User not found.
         '500':
           $ref: '#/components/responses/InternalError'
+  /products:
+    post:
+      description: Allows to admin add a product and returns the product ID.
+      tags:
+        - products
+      operationId: createProduct
+      requestBody:
+        required: true
+        description: A JSON object that contains product name, description, price and quantity.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '201':
+          description: Created product
+          headers:
+            Location:
+              required: true
+              description: URL to get the newly-created product.
+              schema:
+                type: string
+                example: https://localhost:8444/products/1
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID of the created product.
+                    example: 1
+                required:
+                  - id
+          links:
+            GetProductById:
+              operationId: getProductById
+              parameters:
+                productId: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `productId` parameter in `GET /products/{productId}`.
+            UpdateProduct:
+              operationId: updateProduct
+              parameters:
+                productId: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `productId` parameter in `PUT /products/{productId}`.
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/NotAllowedError'
+        '409':
+          description: Product already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: A product with that name already exists.
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    get:
+      description: Get all products for admin and user role.
+      tags:
+        - products
+      operationId: getAllProducts
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: products list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/NotAllowedError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /products/{productId}:
+    get:
+      description: Get product info by ID for admin and user role.
+      tags:
+        - products
+      operationId: getProductById
+      parameters:
+        - in: path
+          description: Numeric identifier of the product to get.
+          name: productId
+          required: true
+          schema:
+            type: integer
+          example: 1
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: product info.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/NotAllowedError'
+        '404':
+          description: product not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: product not found.
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    put:
+      description: Alows admin to update product.
+      tags:
+        - products
+      operationId: updateProduct
+      parameters:
+        - in: path
+          description: Numeric identifier of the product to update.
+          name: productId
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        description: A JSON object that contains product name, description, price and quantity.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: updated product info.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/NotAllowedError'
+        '404':
+          description: product not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: product not found.
+        '409':
+          description: Product already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: A product with that name already exists.
+        '500':
+          $ref: '#/components/responses/InternalError'
 
 components:
   responses:
@@ -359,6 +543,66 @@ components:
         - id
         - username
         - balance
+    ProductRequest:
+      type: object
+      required:
+        - name
+        - description
+        - price
+        - quantity
+      properties:
+        name:
+          description: Product name
+          type: string
+          minLength: 3
+          example: shoes
+        description:
+          description: Product description.
+          type: string
+          minLength: 3
+          example: comfortable shoes
+        price:
+          description: Product price.
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          example: 29.99
+        quantity:
+          description: Product quantity to add.
+          type: integer
+          minimum: 1
+          example: 10
+    ProductResponse:
+      type: object
+      properties:
+        id:
+          description: product ID.
+          type: integer
+          example: 1
+        name:
+          description: Product name
+          type: string
+          minLength: 3
+          example: shoes
+        description:
+          description: Product description.
+          type: string
+          minLength: 3
+          example: comfortable shoes
+        price:
+          description: Product price.
+          type: number
+          example: 29.99
+        quantity:
+          description: Product quantity to add.
+          type: integer
+          example: 10
+      required:
+        - id
+        - name
+        - description
+        - price
+        - quantity
     Error:
         type: object
         description: error message.
