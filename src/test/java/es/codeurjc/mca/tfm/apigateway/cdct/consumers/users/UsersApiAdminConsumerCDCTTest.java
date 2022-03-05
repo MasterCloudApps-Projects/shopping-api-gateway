@@ -9,7 +9,7 @@ import static es.codeurjc.mca.tfm.apigateway.TestConstants.HEADERS;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.ID;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.INVALID_CREDENTIALS_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.INVALID_CREDENTIALS_RESPONSE;
-import static es.codeurjc.mca.tfm.apigateway.TestConstants.INVALID_POST_BODY;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.INVALID_USER_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.JWT_TOKEN;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.JWT_TOKEN_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.LOCATION_HEADER;
@@ -67,7 +67,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .uponReceiving("authenticating with wrong body")
         .method(HttpMethod.POST.name())
         .headers(HEADERS)
-        .body(INVALID_POST_BODY)
+        .body(INVALID_USER_POST_BODY)
         .path(ADMINS_AUTH_URL)
         .willRespondWith()
         .status(HttpStatus.BAD_REQUEST.value())
@@ -120,7 +120,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .path(ADMINS_BASE_URL)
         .method(HttpMethod.POST.name())
         .headers(HEADERS)
-        .body(INVALID_POST_BODY)
+        .body(INVALID_USER_POST_BODY)
         .willRespondWith()
         .status(HttpStatus.BAD_REQUEST.value())
         .body(USERNAME_BAD_REQUEST_RESPONSE)
@@ -171,7 +171,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
     ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
         .post(mockServer.getUrl() + ADMINS_AUTH_URL)
         .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .bodyString(INVALID_POST_BODY, ContentType.APPLICATION_JSON)
+        .bodyString(INVALID_USER_POST_BODY, ContentType.APPLICATION_JSON)
         .execute()
         .returnResponse();
 
@@ -231,7 +231,7 @@ public class UsersApiAdminConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
     ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
         .post(mockServer.getUrl() + ADMINS_BASE_URL)
         .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .bodyString(INVALID_POST_BODY, ContentType.APPLICATION_JSON)
+        .bodyString(INVALID_USER_POST_BODY, ContentType.APPLICATION_JSON)
         .execute()
         .returnResponse();
 

@@ -28,7 +28,7 @@ public class TestConstants {
       + "\"token\":\"" + JWT_TOKEN + "\""
       + "}";
 
-  public static final String INVALID_POST_BODY = "{"
+  public static final String INVALID_USER_POST_BODY = "{"
       + "  \"username\": \"a.martinmar.2020\","
       + "  \"password\": \"P4ssword\""
       + "}";
@@ -138,4 +138,25 @@ public class TestConstants {
 
   public static final String QUANTITY_FIELD = "quantity";
 
+  public static final String INVALID_PRODUCT_POST_BODY = "{\n"
+      + "  \"name\": \"SH\",\n"
+      + "  \"description\": \"COMFORTABLE SHOES\",\n"
+      + "  \"price\": 29.99,\n"
+      + "  \"quantity\": 20\n"
+      + "}";
+
+  public static final String PRODUCT_BAD_REQUEST_RESPONSE = "{"
+      + "  \"error\": \"Name is mandatory and must have a minimum length of 3\""
+      + "}";
+
+  public static final String PRODUCT_ALREADY_EXISTS_RESPONSE = "{\n"
+      + "    \"error\": \"Already exists a product with that name\"\n"
+      + "  }";
+
+  public static final String ALREADY_EXISTENT_NAME_PRODUCT_POST_BODY = "{\n"
+      + "  \"name\": \"DUPLICATED NAME\",\n"
+      + "  \"description\": \"DESCRIPTION\",\n"
+      + "  \"price\": 29.99,\n"
+      + "  \"quantity\": 20\n"
+      + "}";
 }

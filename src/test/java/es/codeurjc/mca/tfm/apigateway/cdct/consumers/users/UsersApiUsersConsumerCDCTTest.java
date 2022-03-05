@@ -14,7 +14,7 @@ import static es.codeurjc.mca.tfm.apigateway.TestConstants.ID_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.INVALID_ADD_BALANCE_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.INVALID_CREDENTIALS_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.INVALID_CREDENTIALS_RESPONSE;
-import static es.codeurjc.mca.tfm.apigateway.TestConstants.INVALID_POST_BODY;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.INVALID_USER_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.JWT_TOKEN;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.JWT_TOKEN_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.LOCATION_HEADER;
@@ -85,7 +85,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .uponReceiving("authenticating with wrong body")
         .method(HttpMethod.POST.name())
         .headers(HEADERS)
-        .body(INVALID_POST_BODY)
+        .body(INVALID_USER_POST_BODY)
         .path(AUTH_URL)
         .willRespondWith()
         .status(HttpStatus.BAD_REQUEST.value())
@@ -138,7 +138,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
         .path(USERS_BASE_URL)
         .method(HttpMethod.POST.name())
         .headers(HEADERS)
-        .body(INVALID_POST_BODY)
+        .body(INVALID_USER_POST_BODY)
         .willRespondWith()
         .status(HttpStatus.BAD_REQUEST.value())
         .body(USERNAME_BAD_REQUEST_RESPONSE)
@@ -346,7 +346,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
     ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
         .post(mockServer.getUrl() + AUTH_URL)
         .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .bodyString(INVALID_POST_BODY, ContentType.APPLICATION_JSON)
+        .bodyString(INVALID_USER_POST_BODY, ContentType.APPLICATION_JSON)
         .execute()
         .returnResponse();
 
@@ -407,7 +407,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
     ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
         .post(mockServer.getUrl() + USERS_BASE_URL)
         .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .bodyString(INVALID_POST_BODY, ContentType.APPLICATION_JSON)
+        .bodyString(INVALID_USER_POST_BODY, ContentType.APPLICATION_JSON)
         .execute()
         .returnResponse();
 
@@ -499,7 +499,7 @@ public class UsersApiUsersConsumerCDCTTest extends AbstractUsersApiBaseConsumerC
   }
 
   @Test
-  @DisplayName("Test get info of a non existin user")
+  @DisplayName("Test get info of a non existing user")
   @PactTestFor(pactMethod = "getUserInfoOfNonExistingUser")
   void testGetUserInfoOfNonExistingUser(MockServer mockServer) throws IOException {
 
