@@ -89,7 +89,9 @@ public class TestConstants {
       + "  \"error\": \"User not found\"\n"
       + "}";
 
-  public static final String BEARER_TOKEN = "Bearer " + JWT_TOKEN;
+  public static final String BEARER_PREFIX = "Bearer ";
+
+  public static final String BEARER_TOKEN = BEARER_PREFIX + JWT_TOKEN;
 
   public static final double ADDED_BALANCE = 35.8;
 
@@ -119,7 +121,7 @@ public class TestConstants {
 
   public static final double PRODUCT_PRICE = 29.99;
 
-  public static final double PRODUCT_QUANTITY = 20;
+  public static final int PRODUCT_QUANTITY = 20;
 
   public static final String VALID_PRODUCT_POST_BODY = "{\n"
       + "  \"name\": \"SHOES\",\n"
@@ -127,5 +129,13 @@ public class TestConstants {
       + "  \"price\": 29.99,\n"
       + "  \"quantity\": 20\n"
       + "}";
+
+  public static final String NAME_FIELD = "name";
+
+  public static final String DESCRIPTION_FIELD = "description";
+
+  public static final String PRICE_FIELD = "price";
+
+  public static final String QUANTITY_FIELD = "quantity";
 
 }

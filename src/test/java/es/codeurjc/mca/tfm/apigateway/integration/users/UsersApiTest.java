@@ -2,18 +2,12 @@ package es.codeurjc.mca.tfm.apigateway.integration.users;
 
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.ADDED_BALANCE;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.ADD_BALANCE_POST_BODY;
-import static es.codeurjc.mca.tfm.apigateway.TestConstants.ADMINS_BASE_URL;
-import static es.codeurjc.mca.tfm.apigateway.TestConstants.AUTH_URL;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.BALANCE_FIELD;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.BEARER_PREFIX;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.ID_FIELD;
-import static es.codeurjc.mca.tfm.apigateway.TestConstants.LOCATION_HEADER;
-import static es.codeurjc.mca.tfm.apigateway.TestConstants.TOKEN_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.USERNAME_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.USERS_BASE_URL;
-import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -30,11 +24,6 @@ public class UsersApiTest extends AbstractIntegrationBaseTest {
   private static int USER_COUNTER = 0;
 
   private static final String USERNAME_TEMPLATE = "user%s@mail.com";
-
-  private static final String USERNAME_AND_PWD_POST_BODY = "{"
-      + "  \"username\": \"%s\","
-      + "  \"password\": \"P4ssword\""
-      + "}";
 
   @Test
   @DisplayName("Test users creation")
@@ -61,7 +50,7 @@ public class UsersApiTest extends AbstractIntegrationBaseTest {
         .get()
         .uri(USERS_BASE_URL + "/" + userId)
         .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .header(AUTHORIZATION, "Bearer " + userToken)
+        .header(AUTHORIZATION, BEARER_PREFIX + userToken)
         .exchange()
         .expectStatus().isOk()
         .expectBody(HashMap.class)
@@ -85,7 +74,7 @@ public class UsersApiTest extends AbstractIntegrationBaseTest {
         .post()
         .uri(USERS_BASE_URL + "/" + userId + "/" + BALANCE_FIELD)
         .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .header(AUTHORIZATION, "Bearer " + userToken)
+        .header(AUTHORIZATION, BEARER_PREFIX + userToken)
         .bodyValue(ADD_BALANCE_POST_BODY)
         .exchange()
         .expectStatus().isOk()
@@ -126,7 +115,7 @@ public class UsersApiTest extends AbstractIntegrationBaseTest {
         .get()
         .uri(USERS_BASE_URL + "/" + userId)
         .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .header(AUTHORIZATION, "Bearer " + adminToken)
+        .header(AUTHORIZATION, BEARER_PREFIX + adminToken)
         .exchange()
         .expectStatus().isOk()
         .expectBody(HashMap.class)
@@ -152,7 +141,7 @@ public class UsersApiTest extends AbstractIntegrationBaseTest {
         .post()
         .uri(USERS_BASE_URL + "/" + userId + "/" + BALANCE_FIELD)
         .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .header(AUTHORIZATION, "Bearer " + adminToken)
+        .header(AUTHORIZATION, BEARER_PREFIX + adminToken)
         .bodyValue(ADD_BALANCE_POST_BODY)
         .exchange()
         .expectStatus().isOk()
@@ -169,61 +158,6 @@ public class UsersApiTest extends AbstractIntegrationBaseTest {
   private String generateUsername() {
     USER_COUNTER++;
     return String.format(USERNAME_TEMPLATE, USER_COUNTER);
-  }
-
-  private int createUser(String username) {
-    return this.callCreateMethod(USERS_BASE_URL, username);
-  }
-
-  private String authenticateUser(String username) {
-    return this.callAuthenticateMethod(USERS_BASE_URL, username);
-  }
-
-  private int createAdmin(String username) {
-    return this.callCreateMethod(ADMINS_BASE_URL, username);
-  }
-
-  private String authenticateAdmin(String username) {
-    return this.callAuthenticateMethod(ADMINS_BASE_URL, username);
-  }
-
-  private int callCreateMethod(String url, String username) {
-    Map<String, Integer> response = webClient
-        .post()
-        .uri(url)
-        .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .bodyValue(String.format(USERNAME_AND_PWD_POST_BODY, username))
-        .exchange()
-        .expectStatus().isCreated()
-        .expectHeader()
-        .value(LOCATION_HEADER,
-            startsWith("https://localhost:" + this.port + url + "/"))
-        .expectBody(HashMap.class)
-        .returnResult()
-        .getResponseBody();
-
-    assertEquals(1, response.size());
-    assertTrue(response.containsKey(ID_FIELD));
-
-    return response.get(ID_FIELD);
-  }
-
-  private String callAuthenticateMethod(String baseUrl, String username) {
-    Map<String, String> response = webClient
-        .post()
-        .uri(baseUrl + AUTH_URL)
-        .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .bodyValue(String.format(USERNAME_AND_PWD_POST_BODY, username))
-        .exchange()
-        .expectStatus().isOk()
-        .expectBody(HashMap.class)
-        .returnResult()
-        .getResponseBody();
-
-    assertEquals(1, response.size());
-    assertNotNull(response.get(TOKEN_FIELD));
-
-    return response.get(TOKEN_FIELD);
   }
 
 }

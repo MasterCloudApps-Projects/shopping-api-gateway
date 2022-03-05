@@ -15,6 +15,14 @@ public class TestContainersBase {
 
   protected static final int USERS_PORT = 8443;
 
+  protected static final String DYNAMODB_SERVICE_NAME = "dynamodb_1";
+
+  protected static final int DYNAMODB_PORT = 8000;
+
+  protected static final String PRODUCTS_SERVICE_NAME = "products_1";
+
+  protected static final int PRODUCTS_PORT = 3445;
+
   protected static final DockerComposeContainer ENVIRONMENT;
 
   static {
@@ -23,7 +31,11 @@ public class TestContainersBase {
             .withExposedService(MYSQL_SERVICE_NAME, MYSQL_PORT,
                 Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)))
             .withExposedService(USERS_SERVICE_NAME, USERS_PORT,
-                Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(60)));
+                Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(60)))
+            .withExposedService(DYNAMODB_SERVICE_NAME, DYNAMODB_PORT,
+                Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)))
+            .withExposedService(PRODUCTS_SERVICE_NAME, PRODUCTS_PORT,
+                Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)));
     ENVIRONMENT.start();
   }
 
