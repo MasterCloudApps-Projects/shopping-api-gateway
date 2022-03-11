@@ -5,6 +5,7 @@ import static es.codeurjc.mca.tfm.apigateway.TestConstants.ADMINS_AUTH_URL;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.ADMINS_BASE_URL;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.AUTH_URL;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.ID_FIELD;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.INVALID_BEARER_TOKEN;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.TOKEN_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.USERS_BASE_URL;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.VALID_CREDENTIALS_POST_BODY;
@@ -115,6 +116,11 @@ public abstract class AbstractBaseProviderCDCTTest extends TestContainersBase {
     );
   }
 
+  @State({"An authenticated user with invalid token"})
+  public Map<String, String> authenticatedUserWithInvalidTokenState() {
+    return Map.of(TOKEN_FIELD, INVALID_BEARER_TOKEN);
+  }
+
   protected CloseableHttpClient getHttpClient()
       throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
     final TrustStrategy acceptingTrustStrategy = (certificate, authType) -> true;
@@ -123,15 +129,16 @@ public abstract class AbstractBaseProviderCDCTTest extends TestContainersBase {
         .loadTrustMaterial(null, acceptingTrustStrategy)
         .build();
 
-    final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext,
+    final SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(
+        sslContext,
         NoopHostnameVerifier.INSTANCE);
     Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
-        .register("https", sslsf).build();
+        .register("https", sslConnectionSocketFactory).build();
     PoolingHttpClientConnectionManager clientConnectionManager = new PoolingHttpClientConnectionManager(
         socketFactoryRegistry);
 
     return HttpClients.custom()
-        .setSSLSocketFactory(sslsf)
+        .setSSLSocketFactory(sslConnectionSocketFactory)
         .setConnectionManager(clientConnectionManager)
         .build();
 

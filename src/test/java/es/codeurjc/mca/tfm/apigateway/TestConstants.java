@@ -93,6 +93,13 @@ public class TestConstants {
 
   public static final String BEARER_TOKEN = BEARER_PREFIX + JWT_TOKEN;
 
+  public static final String INVALID_BEARER_TOKEN = BEARER_PREFIX
+      + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFETUlOX1JPTEUiLCJpYXQiOjE2MzczNDY5ODEsImV4cCI6MTYzNzM0NzI4MX0.CatmBe4laGqFzAGyn4-OXB3JojARpVlHAGmufrowv1Q";
+
+  public static final String INVALID_TOKEN_RESPONSE = "{\n"
+      + "  \"error\": \"Invalid or expired token.\"\n"
+      + "}";
+
   public static final double ADDED_BALANCE = 35.8;
 
   public static final String ADD_BALANCE_POST_BODY = "{\n"
@@ -159,4 +166,5 @@ public class TestConstants {
       + "  \"price\": 29.99,\n"
       + "  \"quantity\": 20\n"
       + "}";
+
 }

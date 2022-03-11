@@ -3,24 +3,36 @@ package es.codeurjc.mca.tfm.apigateway.cdct.consumers.products;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.ALREADY_EXISTENT_NAME_PRODUCT_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.BEARER_TOKEN;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.CREATED_RESPONSE;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.DESCRIPTION_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.HEADERS;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.ID;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.ID_FIELD;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.INVALID_BEARER_TOKEN;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.INVALID_PRODUCT_POST_BODY;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.INVALID_TOKEN_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.LOCATION_HEADER;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.MISSING_TOKEN_RESPONSE;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.NAME_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.NOT_ALLOWED_RESPONSE;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRICE_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCTS_BASE_URL;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_ALREADY_EXISTS_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_BAD_REQUEST_RESPONSE;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_DESCRIPTION;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_NAME;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_PRICE;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_QUANTITY;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.QUANTITY_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.VALID_PRODUCT_POST_BODY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import au.com.dius.pact.consumer.MockServer;
+import au.com.dius.pact.consumer.dsl.PactDslJsonArray;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
@@ -30,6 +42,9 @@ import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ClassicHttpResponse;
@@ -54,6 +69,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @PactTestFor(providerName = "ProductsApiV1Provider", pactVersion = PactSpecVersion.V3)
 @DisplayName("Products API resources consumer CDCT tests")
 public class ProductsApiConsumerCDCTTest {
+
+  private static final String BLUE = "BLUE ";
+
+  private static final String RED = "RED ";
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -150,6 +169,68 @@ public class ProductsApiConsumerCDCTTest {
         .willRespondWith()
         .status(HttpStatus.CONFLICT.value())
         .body(PRODUCT_ALREADY_EXISTS_RESPONSE)
+        .toPact();
+  }
+
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact getProducts(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated user with existing products")
+        .uponReceiving("getting products list")
+        .path(PRODUCTS_BASE_URL)
+        .method(HttpMethod.GET.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", BEARER_TOKEN)
+        .willRespondWith()
+        .status(HttpStatus.OK.value())
+        .body(PactDslJsonArray.newUnorderedMinArray(2)
+            .object()
+            .valueFromProviderState(ID_FIELD, "${firstProductId}", ID)
+            .stringValue(NAME_FIELD, BLUE + PRODUCT_NAME.toUpperCase())
+            .stringValue(DESCRIPTION_FIELD, BLUE + PRODUCT_DESCRIPTION.toUpperCase())
+            .decimalType(PRICE_FIELD, PRODUCT_PRICE)
+            .integerType(QUANTITY_FIELD, PRODUCT_QUANTITY)
+            .closeObject()
+            .object()
+            .valueFromProviderState(ID_FIELD, "${secondProductId}", ID + 1)
+            .stringValue(NAME_FIELD, RED + PRODUCT_NAME.toUpperCase())
+            .stringValue(DESCRIPTION_FIELD, RED + PRODUCT_DESCRIPTION.toUpperCase())
+            .decimalType(PRICE_FIELD, PRODUCT_PRICE)
+            .integerType(QUANTITY_FIELD, PRODUCT_QUANTITY)
+            .closeObject()
+        )
+        .toPact();
+  }
+
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact getProductsListWithoutToken(PactDslWithProvider builder) {
+
+    return builder
+        .given("An unauthenticated admin")
+        .uponReceiving("non authenticated getting products list")
+        .path(PRODUCTS_BASE_URL)
+        .method(HttpMethod.GET.name())
+        .headers(HEADERS)
+        .willRespondWith()
+        .status(HttpStatus.UNAUTHORIZED.value())
+        .body(MISSING_TOKEN_RESPONSE)
+        .toPact();
+  }
+
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact getProductsListWithInvalidToken(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated user with invalid token")
+        .uponReceiving("getting product list with invalid token")
+        .path(PRODUCTS_BASE_URL)
+        .method(HttpMethod.GET.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", INVALID_BEARER_TOKEN)
+        .willRespondWith()
+        .status(HttpStatus.FORBIDDEN.value())
+        .body(INVALID_TOKEN_RESPONSE)
         .toPact();
   }
 
@@ -253,6 +334,78 @@ public class ProductsApiConsumerCDCTTest {
     assertEquals(HttpStatus.CONFLICT.value(), httpResponse.getCode());
     assertEquals(PRODUCT_ALREADY_EXISTS_RESPONSE,
         IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @DisplayName("Test get products list")
+  @PactTestFor(pactMethod = "getProducts")
+  void testGetProductsList(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .get(mockServer.getUrl() + PRODUCTS_BASE_URL)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, BEARER_TOKEN)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.OK.value(), httpResponse.getCode());
+    List<Map<String, Object>> responseBody = this.objectMapper.readValue(
+        httpResponse.getEntity().getContent(), ArrayList.class);
+    assertTrue(responseBody.size() >= 2);
+    assertTrue((Integer) responseBody.get(0).get(ID_FIELD) > 0);
+    assertTrue(responseBody.stream()
+        .anyMatch(product ->
+            product.get(NAME_FIELD).equals(BLUE + PRODUCT_NAME.toUpperCase()) &&
+                product.get(DESCRIPTION_FIELD).equals(BLUE + PRODUCT_DESCRIPTION.toUpperCase()) &&
+                product.get(PRICE_FIELD).equals(PRODUCT_PRICE) &&
+                product.get(QUANTITY_FIELD).equals(PRODUCT_QUANTITY)
+        ));
+    assertTrue(responseBody.stream()
+        .anyMatch(product ->
+            product.get(NAME_FIELD).equals(RED + PRODUCT_NAME.toUpperCase()) &&
+                product.get(DESCRIPTION_FIELD).equals(RED + PRODUCT_DESCRIPTION.toUpperCase()) &&
+                product.get(PRICE_FIELD).equals(PRODUCT_PRICE) &&
+                product.get(QUANTITY_FIELD).equals(PRODUCT_QUANTITY)
+        ));
+  }
+
+  @Test
+  @DisplayName("Test get products list without token")
+  @PactTestFor(pactMethod = "getProductsListWithoutToken")
+  void testGetProductsListWithoutToken(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .get(mockServer.getUrl() + PRODUCTS_BASE_URL)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.UNAUTHORIZED.value(), httpResponse.getCode());
+    assertEquals(MISSING_TOKEN_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @DisplayName("Test get products list with invalid token")
+  @PactTestFor(pactMethod = "getProductsListWithInvalidToken")
+  void testGetProductListWithInvalidToken(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .get(mockServer.getUrl() + PRODUCTS_BASE_URL)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, INVALID_BEARER_TOKEN)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.FORBIDDEN.value(), httpResponse.getCode());
+    assertEquals(INVALID_TOKEN_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
 
   }
 
