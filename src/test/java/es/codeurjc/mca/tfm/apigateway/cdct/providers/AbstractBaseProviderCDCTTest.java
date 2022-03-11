@@ -101,6 +101,13 @@ public abstract class AbstractBaseProviderCDCTTest extends TestContainersBase {
     );
   }
 
+  @State({"An user"})
+  public void existentUserState() throws Exception {
+    if (USER_ID == null) {
+      this.createUser(VALID_CREDENTIALS_POST_BODY);
+    }
+  }
+
   @State({"An authenticated user"})
   public Map<String, String> authenticatedUserState() throws Exception {
     if (USER_ID == null) {

@@ -3,6 +3,7 @@ package es.codeurjc.mca.tfm.apigateway.cdct.providers.products;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.ALREADY_EXISTENT_NAME_PRODUCT_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.BEARER_PREFIX;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.ID_FIELD;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.NAME_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCTS_BASE_URL;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.TOKEN_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.VALID_PRODUCT_POST_BODY;
@@ -42,7 +43,8 @@ public class ProductsApiProviderCDCTTest extends AbstractBaseProviderCDCTTest {
     }
 
     return Map.of(TOKEN_FIELD, ADMIN_TOKEN,
-        ID_FIELD, PRODUCT_ID.toString()
+        ID_FIELD, PRODUCT_ID.toString(),
+        NAME_FIELD, "DUPLICATED NAME"
     );
   }
 

@@ -167,4 +167,11 @@ public class TestConstants {
       + "  \"quantity\": 20\n"
       + "}";
 
+  public static final String PRODUCT_NOT_FOUND_RESPONSE = "{\n"
+      + "  \"error\": \"Product not found\"\n"
+      + "}";
+
+  public static final String BAD_PRODUCT_ID_RESPONSE = "{"
+      + "  \"error\": \"Id must be an integer\""
+      + "}";
 }

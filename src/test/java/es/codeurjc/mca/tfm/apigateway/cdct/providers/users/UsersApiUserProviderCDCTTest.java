@@ -22,13 +22,6 @@ public class UsersApiUserProviderCDCTTest extends AbstractBaseProviderCDCTTest {
     return this.usersUrl;
   }
 
-  @State({"An user"})
-  public void existentUserState() throws Exception {
-    if (USER_ID == null) {
-      this.createUser(VALID_CREDENTIALS_POST_BODY);
-    }
-  }
-
   @State({"A non-existent user"})
   public void nonExistentUserState() {
   }

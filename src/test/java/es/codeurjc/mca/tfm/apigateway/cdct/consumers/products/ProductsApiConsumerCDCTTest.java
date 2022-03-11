@@ -1,6 +1,7 @@
 package es.codeurjc.mca.tfm.apigateway.cdct.consumers.products;
 
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.ALREADY_EXISTENT_NAME_PRODUCT_POST_BODY;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.BAD_PRODUCT_ID_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.BEARER_TOKEN;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.CREATED_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.DESCRIPTION_FIELD;
@@ -20,6 +21,7 @@ import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_ALREADY_EXIST
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_BAD_REQUEST_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_DESCRIPTION;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_NAME;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_NOT_FOUND_RESPONSE;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_PRICE;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_QUANTITY;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.QUANTITY_FIELD;
@@ -43,6 +45,7 @@ import au.com.dius.pact.core.model.annotations.Pact;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
@@ -234,6 +237,91 @@ public class ProductsApiConsumerCDCTTest {
         .toPact();
   }
 
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact getProductInfo(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated user")
+        .given("An existent product")
+        .uponReceiving("getting info of an existent product")
+        .pathFromProviderState(PRODUCTS_BASE_URL + "/${id}", PRODUCTS_BASE_URL + "/" + ID)
+        .method(HttpMethod.GET.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", BEARER_TOKEN)
+        .willRespondWith()
+        .status(HttpStatus.OK.value())
+        .body(new PactDslJsonBody()
+            .valueFromProviderState(ID_FIELD, "${id}", ID)
+            .valueFromProviderState(NAME_FIELD, "${name}", PRODUCT_NAME.toUpperCase())
+            .stringType(DESCRIPTION_FIELD, PRODUCT_DESCRIPTION.toUpperCase())
+            .decimalType(PRICE_FIELD, PRODUCT_PRICE)
+            .integerType(QUANTITY_FIELD, PRODUCT_QUANTITY))
+        .toPact();
+  }
+
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact getProductInfoWithBadId(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated user")
+        .uponReceiving("getting info of a product with bad id")
+        .matchPath(PRODUCTS_BASE_URL + "/[^0-9]+", PRODUCTS_BASE_URL + "/Nan")
+        .method(HttpMethod.GET.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", BEARER_TOKEN)
+        .willRespondWith()
+        .status(HttpStatus.BAD_REQUEST.value())
+        .body(BAD_PRODUCT_ID_RESPONSE)
+        .toPact();
+  }
+
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact getProductInfoWithoutToken(PactDslWithProvider builder) {
+
+    return builder
+        .given("An user")
+        .uponReceiving("getting info of a product without token")
+        .matchPath(PRODUCTS_BASE_URL + "/[0-9]+", PRODUCTS_BASE_URL + "/" + ID)
+        .method(HttpMethod.GET.name())
+        .headers(HEADERS)
+        .willRespondWith()
+        .status(HttpStatus.UNAUTHORIZED.value())
+        .body(MISSING_TOKEN_RESPONSE)
+        .toPact();
+  }
+
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact getProductInfoWithInvalidToken(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated user with invalid token")
+        .uponReceiving("getting info of product with invalid token")
+        .pathFromProviderState(PRODUCTS_BASE_URL + "/${id}", PRODUCTS_BASE_URL + "/" + ID)
+        .method(HttpMethod.GET.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", INVALID_BEARER_TOKEN)
+        .willRespondWith()
+        .status(HttpStatus.FORBIDDEN.value())
+        .body(INVALID_TOKEN_RESPONSE)
+        .toPact();
+  }
+
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact getProductInfoOfNonExistingProduct(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated admin")
+        .uponReceiving("getting info of non existent product")
+        .pathFromProviderState(PRODUCTS_BASE_URL + "/${id}", PRODUCTS_BASE_URL + "/" + ID)
+        .method(HttpMethod.GET.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", BEARER_TOKEN)
+        .willRespondWith()
+        .status(HttpStatus.NOT_FOUND.value())
+        .body(PRODUCT_NOT_FOUND_RESPONSE)
+        .toPact();
+  }
+
   @Test
   @DisplayName("Test product creation")
   @PactTestFor(pactMethod = "productCreation")
@@ -406,6 +494,107 @@ public class ProductsApiConsumerCDCTTest {
     // then
     assertEquals(HttpStatus.FORBIDDEN.value(), httpResponse.getCode());
     assertEquals(INVALID_TOKEN_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @DisplayName("Test get product info")
+  @PactTestFor(pactMethod = "getProductInfo")
+  void testGetProductInfo(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .get(mockServer.getUrl() + PRODUCTS_BASE_URL + "/" + ID)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, BEARER_TOKEN)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.OK.value(), httpResponse.getCode());
+    Map<String, Object> responseBody = this.objectMapper.readValue(
+        httpResponse.getEntity().getContent(), HashMap.class);
+    assertEquals(responseBody.get(ID_FIELD), ID);
+    assertEquals(responseBody.get(NAME_FIELD), PRODUCT_NAME.toUpperCase());
+    assertEquals(responseBody.get(DESCRIPTION_FIELD), PRODUCT_DESCRIPTION.toUpperCase());
+    assertEquals(responseBody.get(PRICE_FIELD), PRODUCT_PRICE);
+    assertEquals(responseBody.get(QUANTITY_FIELD), PRODUCT_QUANTITY);
+
+  }
+
+  @Test
+  @DisplayName("Test get product info with not numeric identifier")
+  @PactTestFor(pactMethod = "getProductInfoWithBadId")
+  void testGetProductInfoWithBadId(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .get(mockServer.getUrl() + PRODUCTS_BASE_URL + "/Nan")
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, BEARER_TOKEN)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.BAD_REQUEST.value(), httpResponse.getCode());
+    assertEquals(BAD_PRODUCT_ID_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @DisplayName("Test get product info without token")
+  @PactTestFor(pactMethod = "getProductInfoWithoutToken")
+  void testGetProductInfoWithoutToken(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .get(mockServer.getUrl() + PRODUCTS_BASE_URL + "/" + ID)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.UNAUTHORIZED.value(), httpResponse.getCode());
+    assertEquals(MISSING_TOKEN_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @DisplayName("Test get product info with invalid token")
+  @PactTestFor(pactMethod = "getProductInfoWithInvalidToken")
+  void testGetProductInfoWithInvalidToken(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .get(mockServer.getUrl() + PRODUCTS_BASE_URL + "/" + ID)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, INVALID_BEARER_TOKEN)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.FORBIDDEN.value(), httpResponse.getCode());
+    assertEquals(INVALID_TOKEN_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @DisplayName("Test get info of a non existing product")
+  @PactTestFor(pactMethod = "getProductInfoOfNonExistingProduct")
+  void testGetProductInfoOfNonExistingProduct(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .get(mockServer.getUrl() + PRODUCTS_BASE_URL + "/" + ID)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, BEARER_TOKEN)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.NOT_FOUND.value(), httpResponse.getCode());
+    assertEquals(PRODUCT_NOT_FOUND_RESPONSE,
+        IOUtils.toString(httpResponse.getEntity().getContent()));
 
   }
 
