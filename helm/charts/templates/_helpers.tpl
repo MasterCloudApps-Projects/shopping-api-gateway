@@ -28,6 +28,16 @@ Users API
 {{- printf "%s://%s:%d/%s"  "https" (include "users.service" .) (int .Values.users.port) "api/v1" }}
 {{- end }}
 
+{{/*
+Products API
+*/}}
+{{- define "products.service" -}}
+{{- printf "%s-%s-%s"  .Values.products.release "products" "service" | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "products.url" -}}
+{{- printf "%s://%s:%d/%s"  "https" (include "products.service" .) (int .Values.products.port) "api/v1" }}
+{{- end }}
 
 {{/*
 Ingress

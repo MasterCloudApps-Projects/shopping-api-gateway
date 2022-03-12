@@ -10,6 +10,11 @@ users:
   release: users-develop
   port: 3443
 
+# products API
+products:
+  release: products-develop
+  port: 3445
+
 # security context
 securityContext:
   runAsUser: 1001

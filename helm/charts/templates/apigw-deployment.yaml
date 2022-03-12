@@ -34,5 +34,7 @@ spec:
         env:
         - name: USERS_URL
           value: {{ include "users.url" . }}
+        - name: PRODUCTS_URL
+          value: {{ include "products.url" . }}
         ports:
         - containerPort: {{ .Values.service.port }}

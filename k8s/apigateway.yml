@@ -32,6 +32,8 @@ spec:
         env:
         - name: USERS_URL
           value: "https://users-service:8443/api/v1"
+        - name: PRODUCTS_URL
+          value: "https://products-service:3445/api/v1"
         - name: SERVER_PORT
           value: '8444'
         ports:
