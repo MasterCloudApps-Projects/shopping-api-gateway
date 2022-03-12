@@ -26,3 +26,22 @@ services:
     volumes:
       - ./mysql_db:/var/lib/mysql
     restart: always
+
+  products:
+    image: amartinm82/tfm-products:trunk
+    environment:
+      AWS_DYNAMO_ENDPOINT: http://dynamodb:8000
+    ports:
+      - 3445:3445
+    depends_on:
+      - dynamodb
+    command: "node src/server.js"
+    restart: on-failure
+
+  dynamodb:
+    image: amazon/dynamodb-local:1.18.0
+    ports:
+      - 8000:8000
+    volumes:
+      - ./dynamodb_data:/home/dynamodblocal/data
+    restart: always
