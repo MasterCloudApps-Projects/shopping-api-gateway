@@ -25,6 +25,11 @@ import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_NOT_FOUND_RES
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_PRICE;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_QUANTITY;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.QUANTITY_FIELD;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.UPDATED_PRODUCT_DESCRIPTION;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.UPDATED_PRODUCT_NAME;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.UPDATED_PRODUCT_PRICE;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.UPDATED_PRODUCT_QUANTITY;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.UPDATE_PRODUCT_POST_BODY;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.VALID_PRODUCT_POST_BODY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -179,7 +184,8 @@ public class ProductsApiConsumerCDCTTest {
   public RequestResponsePact getProducts(PactDslWithProvider builder) {
 
     return builder
-        .given("An authenticated user with existing products")
+        .given("An authenticated user")
+        .given("Existing products")
         .uponReceiving("getting products list")
         .path(PRODUCTS_BASE_URL)
         .method(HttpMethod.GET.name())
@@ -319,6 +325,121 @@ public class ProductsApiConsumerCDCTTest {
         .willRespondWith()
         .status(HttpStatus.NOT_FOUND.value())
         .body(PRODUCT_NOT_FOUND_RESPONSE)
+        .toPact();
+  }
+
+
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact updateProduct(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated admin")
+        .given("A product to update")
+        .uponReceiving("updating an existent product")
+        .pathFromProviderState(PRODUCTS_BASE_URL + "/${id}", PRODUCTS_BASE_URL + "/" + ID)
+        .method(HttpMethod.PUT.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", BEARER_TOKEN)
+        .body(UPDATE_PRODUCT_POST_BODY)
+        .willRespondWith()
+        .status(HttpStatus.OK.value())
+        .body(new PactDslJsonBody()
+            .integerType(ID_FIELD, ID)
+            .stringType(NAME_FIELD, UPDATED_PRODUCT_NAME)
+            .stringType(DESCRIPTION_FIELD, UPDATED_PRODUCT_DESCRIPTION)
+            .decimalType(PRICE_FIELD, UPDATED_PRODUCT_PRICE)
+            .integerType(QUANTITY_FIELD, UPDATED_PRODUCT_QUANTITY)
+        )
+        .toPact();
+  }
+
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact updateProductWithInvalidBody(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated admin")
+        .uponReceiving("updating an existent product with bad name")
+        .pathFromProviderState(PRODUCTS_BASE_URL + "/${id}",
+            PRODUCTS_BASE_URL + "/" + ID)
+        .method(HttpMethod.PUT.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", BEARER_TOKEN)
+        .body(INVALID_PRODUCT_POST_BODY)
+        .willRespondWith()
+        .status(HttpStatus.BAD_REQUEST.value())
+        .body(PRODUCT_BAD_REQUEST_RESPONSE)
+        .toPact();
+  }
+
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact updateProductWithoutToken(PactDslWithProvider builder) {
+
+    return builder
+        .given("An user")
+        .uponReceiving("non authenticated updating a product")
+        .matchPath(PRODUCTS_BASE_URL + "/[0-9]+", PRODUCTS_BASE_URL + "/" + ID)
+        .method(HttpMethod.PUT.name())
+        .headers(HEADERS)
+        .body(UPDATE_PRODUCT_POST_BODY)
+        .willRespondWith()
+        .status(HttpStatus.UNAUTHORIZED.value())
+        .body(MISSING_TOKEN_RESPONSE)
+        .toPact();
+  }
+
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact updateProductAsUser(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated user")
+        .uponReceiving("updating a product as user")
+        .pathFromProviderState(PRODUCTS_BASE_URL + "/${id}",
+            PRODUCTS_BASE_URL + "/" + ID)
+        .method(HttpMethod.PUT.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", BEARER_TOKEN)
+        .body(UPDATE_PRODUCT_POST_BODY)
+        .willRespondWith()
+        .status(HttpStatus.FORBIDDEN.value())
+        .body(NOT_ALLOWED_RESPONSE)
+        .toPact();
+  }
+
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact updateNonExistingProduct(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated admin")
+        .given("Non existent product")
+        .uponReceiving("updating a non existent product")
+        .pathFromProviderState(PRODUCTS_BASE_URL + "/${id}",
+            PRODUCTS_BASE_URL + "/" + ID)
+        .method(HttpMethod.PUT.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", BEARER_TOKEN)
+        .body(UPDATE_PRODUCT_POST_BODY)
+        .willRespondWith()
+        .status(HttpStatus.NOT_FOUND.value())
+        .body(PRODUCT_NOT_FOUND_RESPONSE)
+        .toPact();
+  }
+
+  @Pact(consumer = "ProductsApiV1Consumer")
+  public RequestResponsePact updateProductWithAlreadyExistingName(PactDslWithProvider builder) {
+
+    return builder
+        .given("An authenticated admin")
+        .given("Existing products")
+        .uponReceiving("updating a product with already existent name")
+        .pathFromProviderState(PRODUCTS_BASE_URL + "/${secondProductId}",
+            PRODUCTS_BASE_URL + "/" + ID)
+        .method(HttpMethod.PUT.name())
+        .headers(HEADERS)
+        .headerFromProviderState(AUTHORIZATION, "Bearer ${token}", BEARER_TOKEN)
+        .body(VALID_PRODUCT_POST_BODY.replace("\"shoes\"", "\"blue shoes\""))
+        .willRespondWith()
+        .status(HttpStatus.CONFLICT.value())
+        .body(PRODUCT_ALREADY_EXISTS_RESPONSE)
         .toPact();
   }
 
@@ -594,6 +715,135 @@ public class ProductsApiConsumerCDCTTest {
     // then
     assertEquals(HttpStatus.NOT_FOUND.value(), httpResponse.getCode());
     assertEquals(PRODUCT_NOT_FOUND_RESPONSE,
+        IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @DisplayName("Test update product")
+  @PactTestFor(pactMethod = "updateProduct")
+  void testUpdateProduct(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .put(mockServer.getUrl() + PRODUCTS_BASE_URL + "/" + ID)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, BEARER_TOKEN)
+        .bodyString(UPDATE_PRODUCT_POST_BODY, ContentType.APPLICATION_JSON)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.OK.value(), httpResponse.getCode());
+    Map<String, Object> responseBody = this.objectMapper.readValue(
+        httpResponse.getEntity().getContent(), HashMap.class);
+    assertEquals(responseBody.get(ID_FIELD), ID);
+    assertEquals(responseBody.get(NAME_FIELD), UPDATED_PRODUCT_NAME);
+    assertEquals(responseBody.get(DESCRIPTION_FIELD), UPDATED_PRODUCT_DESCRIPTION);
+    assertEquals(responseBody.get(PRICE_FIELD), UPDATED_PRODUCT_PRICE);
+    assertEquals(responseBody.get(QUANTITY_FIELD), UPDATED_PRODUCT_QUANTITY);
+
+  }
+
+  @Test
+  @DisplayName("Test update product with invalid name")
+  @PactTestFor(pactMethod = "updateProductWithInvalidBody")
+  void testUpdateProductWithInvalidBody(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .put(mockServer.getUrl() + PRODUCTS_BASE_URL + "/" + ID)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, BEARER_TOKEN)
+        .bodyString(INVALID_PRODUCT_POST_BODY, ContentType.APPLICATION_JSON)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.BAD_REQUEST.value(), httpResponse.getCode());
+    assertEquals(PRODUCT_BAD_REQUEST_RESPONSE,
+        IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @DisplayName("Test update product without token")
+  @PactTestFor(pactMethod = "updateProductWithoutToken")
+  void testUpdateProductWithoutToken(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .put(mockServer.getUrl() + PRODUCTS_BASE_URL + "/" + ID)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .bodyString(UPDATE_PRODUCT_POST_BODY, ContentType.APPLICATION_JSON)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.UNAUTHORIZED.value(), httpResponse.getCode());
+    assertEquals(MISSING_TOKEN_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @DisplayName("Test update a product authenticated as user")
+  @PactTestFor(pactMethod = "updateProductAsUser")
+  void testUpdateProductAsUser(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .put(mockServer.getUrl() + PRODUCTS_BASE_URL + "/" + ID)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, BEARER_TOKEN)
+        .bodyString(UPDATE_PRODUCT_POST_BODY, ContentType.APPLICATION_JSON)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.FORBIDDEN.value(), httpResponse.getCode());
+    assertEquals(NOT_ALLOWED_RESPONSE, IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @DisplayName("Test update a non existing product")
+  @PactTestFor(pactMethod = "updateNonExistingProduct")
+  void testUpdateNonExistingProduct(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .put(mockServer.getUrl() + PRODUCTS_BASE_URL + "/" + ID)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, BEARER_TOKEN)
+        .bodyString(UPDATE_PRODUCT_POST_BODY, ContentType.APPLICATION_JSON)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.NOT_FOUND.value(), httpResponse.getCode());
+    assertEquals(PRODUCT_NOT_FOUND_RESPONSE,
+        IOUtils.toString(httpResponse.getEntity().getContent()));
+
+  }
+
+  @Test
+  @DisplayName("Test update a product with already existent name")
+  @PactTestFor(pactMethod = "updateProductWithAlreadyExistingName")
+  void testUpdateProductWithAlreadyExistingName(MockServer mockServer) throws IOException {
+
+    // when
+    ClassicHttpResponse httpResponse = (ClassicHttpResponse) Request
+        .put(mockServer.getUrl() + PRODUCTS_BASE_URL + "/" + ID)
+        .setHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .setHeader(AUTHORIZATION, BEARER_TOKEN)
+        .bodyString(VALID_PRODUCT_POST_BODY.replace("\"shoes\"", "\"blue shoes\""),
+            ContentType.APPLICATION_JSON)
+        .execute()
+        .returnResponse();
+
+    // then
+    assertEquals(HttpStatus.CONFLICT.value(), httpResponse.getCode());
+    assertEquals(PRODUCT_ALREADY_EXISTS_RESPONSE,
         IOUtils.toString(httpResponse.getEntity().getContent()));
 
   }

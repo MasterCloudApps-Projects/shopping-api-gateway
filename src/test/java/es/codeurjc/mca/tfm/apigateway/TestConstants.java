@@ -131,8 +131,8 @@ public class TestConstants {
   public static final int PRODUCT_QUANTITY = 20;
 
   public static final String VALID_PRODUCT_POST_BODY = "{\n"
-      + "  \"name\": \"SHOES\",\n"
-      + "  \"description\": \"COMFORTABLE SHOES\",\n"
+      + "  \"name\": \"shoes\",\n"
+      + "  \"description\": \"comfortable shoes\",\n"
       + "  \"price\": 29.99,\n"
       + "  \"quantity\": 20\n"
       + "}";
@@ -146,8 +146,8 @@ public class TestConstants {
   public static final String QUANTITY_FIELD = "quantity";
 
   public static final String INVALID_PRODUCT_POST_BODY = "{\n"
-      + "  \"name\": \"SH\",\n"
-      + "  \"description\": \"COMFORTABLE SHOES\",\n"
+      + "  \"name\": \"sh\",\n"
+      + "  \"description\": \"comfortable shoes\",\n"
       + "  \"price\": 29.99,\n"
       + "  \"quantity\": 20\n"
       + "}";
@@ -161,8 +161,8 @@ public class TestConstants {
       + "  }";
 
   public static final String ALREADY_EXISTENT_NAME_PRODUCT_POST_BODY = "{\n"
-      + "  \"name\": \"DUPLICATED NAME\",\n"
-      + "  \"description\": \"DESCRIPTION\",\n"
+      + "  \"name\": \"duplicated name\",\n"
+      + "  \"description\": \"description\",\n"
       + "  \"price\": 29.99,\n"
       + "  \"quantity\": 20\n"
       + "}";
@@ -174,4 +174,19 @@ public class TestConstants {
   public static final String BAD_PRODUCT_ID_RESPONSE = "{"
       + "  \"error\": \"Id must be an integer\""
       + "}";
+
+  public static final String UPDATE_PRODUCT_POST_BODY = "{\n"
+      + "  \"name\": \"shoes updated\",\n"
+      + "  \"description\": \"comfortable shoes updated\",\n"
+      + "  \"price\": 29.99,\n"
+      + "  \"quantity\": 20\n"
+      + "}";
+
+  public static final String UPDATED_PRODUCT_NAME = "shoes updated";
+
+  public static final String UPDATED_PRODUCT_DESCRIPTION = "comfortable shoes updated";
+
+  public static final double UPDATED_PRODUCT_PRICE = 99.12;
+
+  public static final int UPDATED_PRODUCT_QUANTITY = 11;
 }

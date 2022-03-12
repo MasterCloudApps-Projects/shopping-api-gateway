@@ -12,7 +12,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import au.com.dius.pact.provider.junitsupport.Provider;
 import au.com.dius.pact.provider.junitsupport.State;
 import es.codeurjc.mca.tfm.apigateway.cdct.providers.AbstractBaseProviderCDCTTest;
-import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +21,10 @@ import org.springframework.beans.factory.annotation.Value;
 public class ProductsApiProviderCDCTTest extends AbstractBaseProviderCDCTTest {
 
   private static Integer PRODUCT_ID = null;
+
+  private static Integer RED_SHOES_ID = null;
+
+  private static Integer BLUE_SHOES_ID = null;
 
   @Value("${products.url}")
   protected String productsUrl;
@@ -48,28 +51,52 @@ public class ProductsApiProviderCDCTTest extends AbstractBaseProviderCDCTTest {
     );
   }
 
-  @State({"An authenticated user with existing products"})
+  @State({"Existing products"})
   public Map<String, String> existentProductListState() throws Exception {
 
     // necessary to create products
     this.authenticateAdmin();
 
-    int shoesId = this.callCreateMethod(this.productsUrl + PRODUCTS_BASE_URL,
-        Map.of(AUTHORIZATION, BEARER_PREFIX + ADMIN_TOKEN),
-        VALID_PRODUCT_POST_BODY
-            .replace("\"SHOES\"", "\"BLUE SHOES\"")
-            .replace("COMFORTABLE ", "BLUE COMFORTABLE "));
-    int redShoesId = this.callCreateMethod(this.productsUrl + PRODUCTS_BASE_URL,
-        Map.of(AUTHORIZATION, BEARER_PREFIX + ADMIN_TOKEN),
-        VALID_PRODUCT_POST_BODY
-            .replace("\"SHOES\"", "\"RED SHOES\"")
-            .replace("COMFORTABLE ", "RED COMFORTABLE "));
+    if (BLUE_SHOES_ID == null) {
+      BLUE_SHOES_ID = this.callCreateMethod(this.productsUrl + PRODUCTS_BASE_URL,
+          Map.of(AUTHORIZATION, BEARER_PREFIX + ADMIN_TOKEN),
+          VALID_PRODUCT_POST_BODY
+              .replace("\"shoes\"", "\"blue shoes\"")
+              .replace("comfortable ", "blue comfortable "));
+    }
 
-    Map<String, String> map = new HashMap<>();
-    map.putAll(this.authenticatedUserState());
-    map.put("firstProductId", String.valueOf(shoesId));
-    map.put("secondProductId", String.valueOf(redShoesId));
-    return map;
+    if (RED_SHOES_ID == null) {
+      RED_SHOES_ID = this.callCreateMethod(this.productsUrl + PRODUCTS_BASE_URL,
+          Map.of(AUTHORIZATION, BEARER_PREFIX + ADMIN_TOKEN),
+          VALID_PRODUCT_POST_BODY
+              .replace("\"shoes\"", "\"red shoes\"")
+              .replace("comfortable ", "red comfortable "));
+    }
+
+    return Map.of(
+        "firstProductId", String.valueOf(BLUE_SHOES_ID),
+        "secondProductId", String.valueOf(RED_SHOES_ID)
+    );
+  }
+
+  @State({"A product to update"})
+  public Map<String, String> existentProductToUpdateState() throws Exception {
+
+    int productToUpdateId = this.callCreateMethod(this.productsUrl + PRODUCTS_BASE_URL,
+        Map.of(AUTHORIZATION, BEARER_PREFIX + ADMIN_TOKEN),
+        "{\n"
+            + "  \"name\": \"name to update\",\n"
+            + "  \"description\": \"description to update\",\n"
+            + "  \"price\": 29.99,\n"
+            + "  \"quantity\": 20\n"
+            + "}");
+
+    return Map.of(ID_FIELD, String.valueOf(productToUpdateId));
+  }
+
+  @State({"Non existent product"})
+  public Map<String, String> nonExistentProductState() throws Exception {
+    return Map.of(ID_FIELD, "999999");
   }
 
   protected void createProduct(String body) throws Exception {
