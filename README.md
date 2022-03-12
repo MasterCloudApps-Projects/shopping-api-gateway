@@ -70,31 +70,36 @@ Project is composed by the next modules:
   * **dockerize.sh**: script that build an app docker local image and to run it as a docker container.
 * **postman**: postman collection and environments configuration.
 * **src**: source code.
-    * **main**:
-      * **java**: java code.
-        * **es.codeurjc.mca.tfm.apigateway**: parent package.
-          * **users**: package containing code associated to users API.
-          * **ApigatewayApplication.java**: contains main API Gateway class.
-      * **resources**: application resources.
-        * **application.yml**: application properties for configuration.
-        * **keystore.jks**: repository of security certificates.
+  * **main**:
+    * **java**: java code.
+      * **es.codeurjc.mca.tfm.apigateway**: parent package.
+        * **products**: package containing code associated to products API.
+        * **users**: package containing code associated to users API.
+        * **ApigatewayApplication.java**: contains main API Gateway class.
+    * **resources**: application resources.
+      * **application.yml**: application properties for configuration.
+      * **keystore.jks**: repository of security certificates.
   * **test**: test folder.
-      * **java**: java code.
-          * **es.codeurjc.mca.tfm.apigateway**: parent package.
-              * **cdct**: contains CDCT tests.
-                * **consumers**: CDCT consumers tests. These tests generate pact contract in `target/pact`.
-                  * **users**: users API CDCT consumer tests.
-                * **providers**: CDCT providers tests. These tests check contract against providers images.
-                  * **users**: users API CDCT provider tests.
-                    * **AbstractUsersApiBaseProviderCDCTTest.java**: Abstract class that launch [src/test/resources/users-docker-compose-test.yml](src/test/resources/users-docker-compose-test.yml) to run necessary docker images.
-              * **integration**: contains integration tests.
-                * **users**: users API integration tests.
-              * **testcontainers**: contains base class with testcontainers config that launch [docker-compose-test](src/test/resources/docker-compose-test.yml) file.
-              * **unit**: contains unit tests.
-                * **users**: users API route configuration unit tests. 
-      * **resources**: application test resources.
-        * **application-test.yml**: application properties for testing configuration.
-        * **docker-compose-test.yml**: docker compose file for testing purposes without volumes.
+    * **java**: java code.
+      * **es.codeurjc.mca.tfm.apigateway**: parent package.
+        * **cdct**: contains CDCT tests.
+          * **consumers**: CDCT consumers tests. These tests generate pact contract in `target/pact`.
+            * **products**: products API CDCT consumer tests.
+            * **users**: users API CDCT consumer tests.
+          * **providers**: CDCT providers tests. These tests check contract against providers images.
+            * **products**: products API CDCT provider tests.
+            * **users**: users API CDCT provider tests.
+            * **AbstractBaseProviderCDCTTest.java**: Abstract class with common methods for provider tests. Also extends [TestContainersBase.java](src/test/java/es/codeurjc/mca/tfm/apigateway/testcontainers/TestContainersBase.java) to run necessary docker images.
+        * **integration**: contains integration tests.
+          * **products**: products API integration tests. 
+          * **users**: users API integration tests.
+        * **testcontainers**: contains base class with testcontainers config that launch [docker-compose-test](src/test/resources/docker-compose-test.yml) file.
+        * **unit**: contains unit tests.
+          * **products**: products API route configuration unit tests. 
+          * **users**: users API route configuration unit tests. 
+    * **resources**: application test resources.
+      * **application-test.yml**: application properties for testing configuration.
+      * **docker-compose-test.yml**: docker compose file for testing purposes without volumes.
 * **LICENSE**: Apache 2 license file.
 * **pom.xml**: file that contains information about the project and configuration details used by Maven to build the project.
 * **README.md**: this file.
@@ -104,6 +109,7 @@ Project configuration is in [src/main/resources/application.yml](./src/main/reso
 
 ### Properties description
 * **users.url**: Users API url.
+* **products.url**: Products API url.
 
 * **server.ssl.key-store-password**: Server key store
 * **server.ssl.key-store**: Server key store path.
@@ -116,8 +122,10 @@ This is not suitable for production, and should be fixed in next steps.
 ### Helm chart configurable values
 The next variables are defined to use helm chart in [helm/charts/values.yaml](./helm/charts/values.yaml):
 * **namespace**: K8s namespace. By default `tfm-dev-amartinm82`.
-* **users.release**: Users API deployed release (necessary to know the user-service to use in k8s cluster). By default `users-develop`.
+* **users.release**: Users API deployed release (necessary to know the users-service to use in k8s cluster). By default `users-develop`.
 * **users.port**: Users API port. By default `3443`.
+* **products.release**: Products API deployed release (necessary to know the products-service to use in k8s cluster). By default `products-develop`.
+* **products.port**: Products API port. By default `3445`. 
 * **securityContext.runAsUser**: user which run the app in container. By default `1001`.
 * **replicaCount**: number of replicas for the app. By default `1`.
 * **image.repository**: app image name. By default `amartinm82/tfm-apigw`.
@@ -193,7 +201,7 @@ In both cases, [locally](#locally) and [As docker container](#as-docker-containe
 * **Openapi**: open `openapi.yml` content in [swagger editor](https://editor.swagger.io/) and select `localhost` server and execute endpoints you want.
 * **Postman**: select `TFM-apigw-local-env` environment variable. Execute postman collection:
     * **Manually**: Set values you want in the endpoint body and run it.
-    * **Automatically**: Set values to `userUsername` and `adminUsername` variables, and execute [Postman Collection Runner](https://learning.postman.com/docs/running-collections/intro-to-collection-runs/).
+    * **Automatically**: Set values to `userUsername`, `adminUsername` and `productName` variables, and execute [Postman Collection Runner](https://learning.postman.com/docs/running-collections/intro-to-collection-runs/).
 
 ## Contributing
 To contribute to this project have in mind:
@@ -209,7 +217,7 @@ To contribute to this project have in mind:
 This project has two available environments:
 * Preproduction (PRE): Used to test the application previously to release it in a productive environment.
   This environment is accessible in the URL https://apigw-tfm-dev-amartinm82.cloud.okteto.net.
-* Production (PRO): productive environment. Accesible in URL https://apigw-tfm-amartinm82.cloud.okteto.net.
+* Production (PRO): productive environment. Accessible in URL https://apigw-tfm-amartinm82.cloud.okteto.net.
 
 The mechanism used to deploy the application in any of the previous environment is via github actions, that are defined in workflows in folder [.github/workflows](.github/workflows).
 ### PRE
