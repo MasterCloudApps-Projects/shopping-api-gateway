@@ -24,6 +24,7 @@
     <junit-platform-suite.version>1.8.2</junit-platform-suite.version>
     <jib-maven-plugin.version>3.2.0</jib-maven-plugin.version>
     <maven-release-plugin.version>3.0.0-M5</maven-release-plugin.version>
+    <wiremock-jre8-standalone.version>2.32.0</wiremock-jre8-standalone.version>
   </properties>
 
   <scm>
@@ -101,6 +102,13 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-contract-wiremock</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.tomakehurst</groupId>
+      <artifactId>wiremock-jre8-standalone</artifactId>
+      <version>${wiremock-jre8-standalone.version}</version>
       <scope>test</scope>
     </dependency>
 
