@@ -223,6 +223,24 @@
 
   <profiles>
     <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven-surefire-plugin.version}</version>
+            <configuration>
+              <groups>UnitTest,ConsumerCDCTTest,IntegrationTest</groups>
+              <excludedGroups>ProviderCDCTTest</excludedGroups>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>cdctConsumer</id>
       <activation>
         <activeByDefault>false</activeByDefault>
