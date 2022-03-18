@@ -162,8 +162,13 @@ mvn test -Pit
 ```
 
 #### Run CDCT Tests
+Run CDCT consumer first to generate contracts.
 ```
-mvn test -Pcdct
+mvn test -PcdctConsumer
+```
+Run CDCT provider tests
+```
+run: mvn test -PcdctProvider
 ```
 
 ### Run application

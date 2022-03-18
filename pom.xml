@@ -165,8 +165,9 @@
                   mvn test -Punit
                 </pre-commit>
                 <pre-push>
-                  mvn test -Pcdct
                   mvn test -Pit
+                  mvn test -PcdctConsumer
+                  mvn test -PcdctProvider
                 </pre-push>
               </hooks>
             </configuration>
