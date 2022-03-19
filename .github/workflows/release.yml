@@ -120,6 +120,8 @@ jobs:
               tag: ${{ github.ref_name }}
             users:
               release: users-production
+            products:
+              release: products-production
           helm: helm3
         env:
           KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
