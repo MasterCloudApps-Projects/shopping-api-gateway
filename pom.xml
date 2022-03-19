@@ -9,7 +9,7 @@
   </parent>
   <groupId>es.codeurjc.mca.tfm</groupId>
   <artifactId>apigateway</artifactId>
-  <version>1.0.5-SNAPSHOT</version>
+  <version>1.0.5</version>
   <name>apigateway</name>
   <description>Master cloud apps TFM api gateway</description>
   <properties>
@@ -29,7 +29,7 @@
 
   <scm>
     <developerConnection>scm:git:https://github.com/mca-tfm/api-gateway.git</developerConnection>
-    <tag>1.0.3</tag>
+    <tag>1.0.5</tag>
   </scm>
 
   <dependencies>
