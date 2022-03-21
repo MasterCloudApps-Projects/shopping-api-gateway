@@ -235,6 +235,8 @@ When a push is done on remote branch (or a PR), github actions jobs defined in [
 So, when we push in the main branch, because of the action execution, it results in if our code is right formatted, and works because it pass the tests, it is deployed and running on a k8s cluster of PRE environment.
 
 ### PRO
+
+#### Generate and deploy a new release
 To deploy in PRO environment is necessary to generate a new release. To do that, execute:
 ```
 mvn -Dusername=<git_user> release:prepare
@@ -247,6 +249,10 @@ Due to the new tag is pushed, the workflow defined in [release.yml](.github/work
 * **publish-release**: Depends on previous job. Publish the release in github.
 * **publish-image**: Depends on previous job. Generate docker image of app, tagging it with `latest` and  `{pushed_tag}` (i.e: if we generated the tag 1.2.0. it tag the new image with 1.2.0), and publishing them in [Dockerhub](https://hub.docker.com/).
 * **deploy**: Depends on previous job. It deploys application in PRO k8s cluster using `{pushed_tag}` image. For this, it uses the helm chart defined in [helm/charts](./helm/charts/) folder.
+
+#### Deploy existing release
+To deploy an existing release you can execute in github manual workflow defined in [manual-release-deploy.yml](.github/workflows/manual-release-deploy.yml).
+Select main branch (the only one that exists), and introduce the release to deploy in the input. The release will be deployed in PRO environment.
 
 ### Checking application is deployed
 Like in [Usage > Run application > Checking application is running](#checking-application-is-running) you can check if the application is successfully deployed using Openapi definition or Postman collection.
