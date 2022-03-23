@@ -28,6 +28,7 @@
 ## Description
 This is an API Gateway for MasterCloudApps TFM. It routes to:
 * [Users API](https://github.com/mca-tfm/users).
+* [Products API](https://github.com/mca-tfm/products).
 
 ## Requirements
 The next requirements are necessary to work with this project:
