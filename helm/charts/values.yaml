@@ -15,6 +15,11 @@ products:
   release: products-develop
   port: 3445
 
+# purchases API
+purchases:
+  release: pur-dev
+  port: 8446
+
 # security context
 securityContext:
   runAsUser: 1001

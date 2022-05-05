@@ -34,6 +34,8 @@ spec:
           value: "https://users-service:8443/api/v1"
         - name: PRODUCTS_URL
           value: "https://products-service:3445/api/v1"
+        - name: PURCHASES_URL
+          value: "https://purchases-service:8446/api/v1"
         - name: SERVER_PORT
           value: '8444'
         ports:

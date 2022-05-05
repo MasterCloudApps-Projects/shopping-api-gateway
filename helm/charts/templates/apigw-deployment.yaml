@@ -36,5 +36,7 @@ spec:
           value: {{ include "users.url" . }}
         - name: PRODUCTS_URL
           value: {{ include "products.url" . }}
+        - name: PURCHASES_URL
+          value: {{ include "purchases.url" . }}
         ports:
         - containerPort: {{ .Values.service.port }}

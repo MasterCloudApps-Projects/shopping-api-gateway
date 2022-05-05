@@ -131,6 +131,8 @@ The next variables are defined to use helm chart in [helm/charts/values.yaml](./
 * **users.port**: Users API port. By default `3443`.
 * **products.release**: Products API deployed release (necessary to know the products-service to use in k8s cluster). By default `products-develop`.
 * **products.port**: Products API port. By default `3445`. 
+* **purchases.release**: Purchases API deployed release (necessary to know the purchases-service to use in k8s cluster). By default `pur-dev`.
+* **purchases.port**: Purchases API port. By default `8446`.
 * **securityContext.runAsUser**: user which run the app in container. By default `1001`.
 * **replicaCount**: number of replicas for the app. By default `1`.
 * **image.repository**: app image name. By default `amartinm82/tfm-apigw`.
