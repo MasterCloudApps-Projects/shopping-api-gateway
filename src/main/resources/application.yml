@@ -4,6 +4,9 @@ users:
 products:
   url: https://${DOCKER_HOST_IP:localhost}:3445/api/v1
 
+purchases:
+  url: https://${DOCKER_HOST_IP:localhost}:8446/api/v1
+
 spring:
   application:
     name: api-gateway

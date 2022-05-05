@@ -29,6 +29,7 @@
 This is an API Gateway for MasterCloudApps TFM. It routes to:
 * [Users API](https://github.com/mca-tfm/users).
 * [Products API](https://github.com/mca-tfm/products).
+* [Purchases API](https://github.com/mca-tfm/purchases).
 
 ## Requirements
 The next requirements are necessary to work with this project:
@@ -66,6 +67,7 @@ Project is composed by the next modules:
 * **api**: [openapi](https://swagger.io/specification/) definition with REST endpoints.
 * **checkstyle**: contains project style for IDE plugin.
 * **docker**: contains docker files
+  * **init**: folder that contains mysql docker image init script [01.sql](docker/init/01.sql) to create another database (purchases).
   * **docker-compose.yml**: allows to launch the app and its necessary resources in local (MySQL database, users API and apigateway).
   * **docker-compose-dev.yml**: allows to launch the necessary resources to run the app in local (MySQL database, and users API).
   * **dockerize.sh**: script that build an app docker local image and to run it as a docker container.
@@ -75,6 +77,7 @@ Project is composed by the next modules:
     * **java**: java code.
       * **es.codeurjc.mca.tfm.apigateway**: parent package.
         * **products**: package containing code associated to products API.
+        * **purchases**: package containing code associated to purchases API.
         * **users**: package containing code associated to users API.
         * **ApigatewayApplication.java**: contains main API Gateway class.
     * **resources**: application resources.
@@ -111,6 +114,7 @@ Project configuration is in [src/main/resources/application.yml](./src/main/reso
 ### Properties description
 * **users.url**: Users API url.
 * **products.url**: Products API url.
+* **purchases.url**: Purchases API url.
 
 * **server.ssl.key-store-password**: Server key store
 * **server.ssl.key-store**: Server key store path.
@@ -169,7 +173,7 @@ mvn test -PcdctConsumer
 ```
 Run CDCT provider tests
 ```
-run: mvn test -PcdctProvider
+mvn test -PcdctProvider
 ```
 
 ### Run application

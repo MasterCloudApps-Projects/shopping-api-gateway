@@ -34,5 +34,8 @@ build/
 
 # Docker volumes
 /docker/mysql_db
+/docker/dynamodb_db
+/docker/zookeeper
+/docker/kafka
 # Docker .env file
 /docker/.env

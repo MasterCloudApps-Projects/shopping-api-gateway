@@ -457,6 +457,319 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
 
+  /shopping-carts:
+    post:
+      description: Create a new shopping cart.
+      tags:
+        - shopping-carts
+      operationId: createShoppingCart
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '202':
+          description: Shopping cart creation accepted
+          headers:
+            Location:
+              required: true
+              description: URL to get the newly-created shopping cart.
+              schema:
+                type: string
+                example: https://localhost:8444/shopping-carts/1
+          links:
+            GetShoppingCartById:
+              operationId: getShoppingCartById
+              parameters:
+                id: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `id` parameter in `GET /shopping-carts/{id}`.
+            deleteShoppingCartById:
+              operationId: deleteShoppingCartById
+              parameters:
+                id: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `id` parameter in `DELETE /shopping-carts/{id}`.
+            completeShoppingCart:
+              operationId: completeShoppingCart
+              parameters:
+                id: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `id` parameter in `PATCH /shopping-carts/{id}`.
+            SetItem:
+              operationId: setItem
+              parameters:
+                id: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `id` parameter in `PATCH /shopping-carts/{id}/products/{productId}`.
+            DeleteItem:
+              operationId: deleteItem
+              parameters:
+                id: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `id` parameter in `DELETE /shopping-carts/{id}/products/{productId}`.
+
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/NotAllowedError'
+        '409':
+          description: User already has an incomplete shopping cart.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: User already has an incomplete shopping cart.
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /shopping-carts/{id}:
+    get:
+      description: Get shopping cart info by ID.
+      tags:
+        - shopping-carts
+      operationId: getShoppingCartById
+      parameters:
+        - in: path
+          description: Numeric identifier of the shopping cart to get.
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: shopping cart info.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingCartResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/NotAllowedError'
+        '404':
+          description: shopping cart not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: shopping cart not found.
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    delete:
+      description: Delete shopping cart by ID.
+      tags:
+        - shopping-carts
+      operationId: deleteShoppingCartById
+      parameters:
+        - in: path
+          description: Numeric identifier of the shopping cart to get.
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '202':
+          description: Accepted shopping cart deletion with shopping cart to delete info.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingCartResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/NotAllowedError'
+        '404':
+          description: shopping cart not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: shopping cart not found.
+        '409':
+          description: Shopping cart is completed, can't be deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Shopping cart is completed, can't be deleted.
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    patch:
+      description: Set shopping cart as completed.
+      tags:
+        - shopping-carts
+      operationId: completeShoppingCart
+      parameters:
+        - in: path
+          description: Numeric identifier of the shopping cart to complete.
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '202':
+          description: Accepted to complete shopping cart.
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/NotAllowedError'
+        '404':
+          description: shopping cart not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: shopping cart not found.
+        '409':
+          description: Shopping cart is empty, can't be completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Shopping cart is empty, can't be completed.
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /shopping-carts/{id}/products/{productId}:
+    patch:
+      description: Allows set item in shopping cart.
+      tags:
+        - shopping-carts
+      operationId: setItem
+      parameters:
+        - in: path
+          description: Numeric identifier of the shopping cart where set item.
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+        - in: path
+          description: Numeric identifier of the product to set in shopping cart.
+          name: productId
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        description: A JSON object that contains product unit price and quantity.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetItemRequest'
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '202':
+          description: Accepted to update shopping cart info.
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/NotAllowedError'
+        '404':
+          description: shopping cart not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: shopping cart not found.
+        '409':
+          description: Shopping cart is completed, can't be modified.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Shopping cart is completed, can't be modified.
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    delete:
+      description: Remove product from shopping cart.
+      tags:
+        - shopping-carts
+      operationId: deleteItem
+      parameters:
+        - in: path
+          description: Numeric identifier of the shopping cart to remove item from.
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+        - in: path
+          description: Numeric identifier of the product to remove from shopping cart.
+          name: productId
+          required: true
+          schema:
+            type: integer
+          example: 1
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '202':
+          description: Accepted shopping cart item deletion.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingCartResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/NotAllowedError'
+        '404':
+          description: shopping cart not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: shopping cart not found.
+        '409':
+          description: Shopping cart is completed, can't be deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Shopping cart is completed, can't be deleted.
+        '500':
+          $ref: '#/components/responses/InternalError'
+
 components:
   responses:
     InvalidCredentialsError:
@@ -603,11 +916,82 @@ components:
         - description
         - price
         - quantity
+    SetItemRequest:
+      type: object
+      required:
+        - unitPrice
+        - quantity
+      properties:
+        unitPrice:
+          description: Product unit price.
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          example: 29.99
+        quantity:
+          description: Product quantity.
+          type: integer
+          minimum: 1
+          example: 10
+    ItemResponse:
+      type: object
+      required:
+        - productId
+        - unitPrice
+        - quantity
+      properties:
+        productId:
+          description: Product identifier
+          type: integer
+          example: 1
+        unitPrice:
+          description: Product unit price.
+          type: number
+          example: 29.99
+        quantity:
+          description: Product quantity.
+          type: integer
+          example: 10
+        totalPrice:
+          description: Product total price.
+          type: number
+          example: 299.90
+    ShoppingCartResponse:
+      type: object
+      properties:
+        id:
+          description: Shopping cart identifier.
+          type: integer
+          format: int64
+          example: 1
+        userId:
+          description: User identifier.
+          type: integer
+          example: 1
+        completed:
+          description: Indicates if shopping cart is completed.
+          type: boolean
+          example: false
+        items:
+          description: Shopping cart items.
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemResponse'
+        totalPrice:
+          description: Shopping cart total price.
+          type: number
+          example: 299.9
+      required:
+        - id
+        - userId
+        - completed
+        - items
+        - totalPrice
     Error:
-        type: object
-        description: error message.
-        properties:
-          error:
-            type: string
-        required:
-          - error
+      type: object
+      description: error message.
+      properties:
+        error:
+          type: string
+      required:
+        - error

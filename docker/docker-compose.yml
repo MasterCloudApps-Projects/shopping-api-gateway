@@ -2,12 +2,16 @@ version: '3.9'
 services:
   apigw:
     image: "${DOCKER_LOCAL_IMAGE}"
+    environment:
+      - USERS_URL=https://users:8443/api/v1
+      - PRODUCTS_URL=https://products:3445/api/v1
+      - PURCHASES_URL=https://purchases:8446/api/v1
     ports:
       - 8444:8444
-    environment:
-      - DOCKER_HOST_IP=${DOCKER_HOST_IP}
     depends_on:
       - users
+      - products
+      - purchases
     restart: on-failure
 
   users:
@@ -35,6 +39,7 @@ services:
       - MYSQL_ROOT_PASSWORD=pass
     volumes:
       - ./mysql_db:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
     restart: always
 
   products:
@@ -55,3 +60,48 @@ services:
     volumes:
       - ./dynamodb_data:/home/dynamodblocal/data
     restart: always
+
+  purchases:
+    image: amartinm82/tfm-purchases:trunk
+    ports:
+      - 8446:8446
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/purchases
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=pass
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+      - KAFKA_BOOTSTRAPADDRESS=kafka:9092
+      - SPRING_DEVTOOLS_ADDPROPERTIES=false
+    depends_on:
+      - mysql
+      - kafka
+    restart: always
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.3.8
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      KAFKA_HEAP_OPTS: -Xmx64m
+    volumes:
+      - ./zookeeper/data:/var/lib/zookeeper/data
+      - ./zookeeper/log:/var/lib/zookeeper/log
+
+  kafka:
+    image: "confluentinc/cp-kafka:5.3.8"
+    ports:
+      - 9092:9092
+      - 29092:29092
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_LISTENERS: LC://kafka:29092,LX://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: LC://kafka:29092,LX://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LC:PLAINTEXT,LX:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LC
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_HEAP_OPTS: -Xmx192m
+    volumes:
+      - ./kafka/data:/var/lib/kafka/data
