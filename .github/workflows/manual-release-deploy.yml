@@ -31,6 +31,8 @@ jobs:
               release: users-production
             products:
               release: products-production
+            purchases:
+              release: pur-pro
           helm: helm3
         env:
           KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
