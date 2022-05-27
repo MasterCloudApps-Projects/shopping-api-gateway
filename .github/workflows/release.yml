@@ -18,7 +18,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
-      - name: get-npm-version
+      - name: get-project-version
         id: package_version
         run: echo ::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
       - name: Check tag name
