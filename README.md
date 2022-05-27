@@ -68,9 +68,11 @@ Project is composed by the next modules:
 * **checkstyle**: contains project style for IDE plugin.
 * **docker**: contains docker files
   * **init**: folder that contains mysql docker image init script [01.sql](docker/init/01.sql) to create another database (purchases).
-  * **docker-compose.yml**: allows to launch the app and its necessary resources in local (MySQL database, users API and apigateway).
-  * **docker-compose-dev.yml**: allows to launch the necessary resources to run the app in local (MySQL database, and users API).
+  * **docker-compose.yml**: allows to launch the app and its necessary resources as a docker image (MySQL database, APIs microservices and apigateway).
+  * **docker-compose-dev.yml**: allows to launch the necessary resources to run the app in local (MySQL database, and APIs microservices).
   * **dockerize.sh**: script that build an app docker local image and to run it as a docker container.
+* **helm/charts**: [helm](https://helm.sh/) chart is defined inside.
+* **k8s**: k8s manifests and scripts to apply all of them or remove them.
 * **postman**: postman collection and environments configuration.
 * **src**: source code.
   * **main**:
@@ -221,7 +223,7 @@ To contribute to this project have in mind:
 2. In order to ensure the right style and code conventions, and that code to commit and push is ok, this project use __pre-commit and pre-push git hooks__.
    This is implemented using [githook-maven-plugin](https://mvnrepository.com/artifact/io.github.phillipuniverse/githook-maven-plugin/1.0.5).
     * **pre-commit:** This hook run [maven-checkstyle-plugin](https://maven.apache.org/plugins/maven-checkstyle-plugin/) and unit tests, and if fails, changes can't be committed.
-    * **pre-push:** This hook run CDCT adn integrations tests, and if fails, commits can't be pushed. 
+    * **pre-push:** This hook run CDCT and integrations tests, and if fails, commits can't be pushed. 
 4. The API First approach was used, so please, if is necessary to modify API, in first place you must modify and validate [openapi definition](./api/openapi.yml), and later, perform the code changes.
 5. Every code you modify or add must have a test that check the right behaviour of it (As a future task we'll add sonar to ensure there is a minimum coverage).
 
@@ -239,7 +241,7 @@ When a push is done on remote branch (or a PR), github actions jobs defined in [
 * **publish-image**: Publish Docker image `tfm-apigw` with tag `trunk` in [Dockerhub](https://hub.docker.com/).
 * **deploy**: Deploy the previous generated image in PRE k8s cluster. For this, it uses the helm chart defined in [helm/charts](./helm/charts/) folder.
 
-So, when we push in the main branch, because of the action execution, it results in if our code is right formatted, and works because it pass the tests, it is deployed and running on a k8s cluster of PRE environment.
+So, when we push in the main branch, because of the action execution, it results in if our code is right formatted, and works because it passes the tests, it is deployed and running on a k8s cluster of PRE environment.
 
 ### PRO
 
@@ -254,7 +256,7 @@ Due to the new tag is pushed, the workflow defined in [release.yml](.github/work
 * **check-tag**: Verifies if pushed tag match with package version (to avoid manually tags creation).
 * **publish-package**: Depends on previous job. Publish mvn package version in github packages repository.
 * **publish-release**: Depends on previous job. Publish the release in github.
-* **publish-image**: Depends on previous job. Generate docker image of app, tagging it with `latest` and  `{pushed_tag}` (i.e: if we generated the tag 1.2.0. it tag the new image with 1.2.0), and publishing them in [Dockerhub](https://hub.docker.com/).
+* **publish-image**: Depends on previous job. Generate docker image of app, tagging it with `latest` and  `{pushed_tag}` (i.e: if we generated the tag 1.2.0. it tags the new image with 1.2.0), and publishing them in [Dockerhub](https://hub.docker.com/).
 * **deploy**: Depends on previous job. It deploys application in PRO k8s cluster using `{pushed_tag}` image. For this, it uses the helm chart defined in [helm/charts](./helm/charts/) folder.
 
 #### Deploy existing release
