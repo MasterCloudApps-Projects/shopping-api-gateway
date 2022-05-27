@@ -189,4 +189,6 @@ public class TestConstants {
   public static final double UPDATED_PRODUCT_PRICE = 99.12;
 
   public static final int UPDATED_PRODUCT_QUANTITY = 11;
+
+  public static final String SHOPPING_CARTS_BASE_URL = "/shopping-carts";
 }
