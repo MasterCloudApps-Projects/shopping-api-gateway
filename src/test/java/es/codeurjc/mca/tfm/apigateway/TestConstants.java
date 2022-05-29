@@ -191,4 +191,12 @@ public class TestConstants {
   public static final int UPDATED_PRODUCT_QUANTITY = 11;
 
   public static final String SHOPPING_CARTS_BASE_URL = "/shopping-carts";
+
+  public static final String USER_ID_FIELD = "userId";
+
+  public static final String COMPLETED_FIELD = "completed";
+
+  public static final String ITEMS_FIELD = "items";
+
+  public static final String TOTAL_PRICE_FIELD = "totalPrice";
 }

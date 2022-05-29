@@ -10,6 +10,7 @@ services:
       - RDS_DB_NAME=users
       - RDS_USERNAME=root
       - RDS_PASSWORD=pass
+      - CONN_RETRY_INTERVAL=20000
     depends_on:
       - mysql
     command: "node src/server.js"
@@ -41,3 +42,43 @@ services:
     ports:
       - 8000:8000
     restart: always
+
+  purchases:
+    image: amartinm82/tfm-purchases:trunk
+    ports:
+      - 8446:8446
+    environment:
+      - RDS_HOSTNAME=mysql
+      - RDS_DATABASE=purchases
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=pass
+      - KAFKA_BOOTSTRAPADDRESS=kafka:9092
+    depends_on:
+      - mysql
+      - kafka
+    restart: on-failure
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.3.8
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      KAFKA_HEAP_OPTS: -Xmx64m
+
+  kafka:
+    image: "confluentinc/cp-kafka:5.3.8"
+    ports:
+      - 9092:9092
+      - 29092:29092
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_LISTENERS: LC://kafka:29092,LX://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: LC://kafka:29092,LX://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LC:PLAINTEXT,LX:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LC
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_HEAP_OPTS: -Xmx192m
+

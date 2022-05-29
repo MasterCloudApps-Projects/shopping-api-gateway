@@ -18,6 +18,7 @@ import es.codeurjc.mca.tfm.apigateway.testcontainers.TestContainersBase;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.net.ssl.SSLException;
@@ -62,8 +63,11 @@ public abstract class AbstractIntegrationBaseTest extends TestContainersBase {
     });
     ClientHttpConnector httpConnector = new ReactorClientHttpConnector(
         httpClient);
-    this.webClient = WebTestClient.bindToServer(httpConnector)
-        .baseUrl("https://localhost:" + this.port).build();
+    this.webClient = WebTestClient
+        .bindToServer(httpConnector)
+        .baseUrl("https://localhost:" + this.port)
+        .responseTimeout(Duration.ofSeconds(10))
+        .build();
 
   }
 
