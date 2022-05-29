@@ -69,7 +69,7 @@ public class PurchasesApiTest extends AbstractIntegrationBaseTest {
 
   @Test
   @DisplayName("Test shopping cart creation")
-  public void givenPurchasesApiRequestWhenCreateShoppingCartThenShouldCreateProductAndReturnAcceptedResponseAndId()
+  public void givenPurchasesApiRequestWhenCreateShoppingCartThenShouldReturnAccepted()
       throws InterruptedException {
     this.createShoppingCart();
   }
@@ -90,7 +90,7 @@ public class PurchasesApiTest extends AbstractIntegrationBaseTest {
 
   @Test
   @DisplayName("Test shopping cart deletion")
-  public void givenPurchasesApiRequestWhenDeleteExistentShoppingCartThenShouldReturnOkAndInfo()
+  public void givenPurchasesApiRequestWhenDeleteExistentShoppingCartThenShouldReturnAccepted()
       throws InterruptedException {
     this.createShoppingCart();
     this.deleteShoppingCart();
