@@ -4154,8 +4154,7 @@
 									"value": "application/json"
 								}
 							],
-							"cookie": [],
-							"body": "{\n  \"id\": 1,\n  \"userId\": 1,\n  \"completed\": false,\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"unitPrice\": 29.99,\n      \"quantity\": 10,\n      \"totalPrice\": 299.9\n    },\n    {\n      \"productId\": 1,\n      \"unitPrice\": 29.99,\n      \"quantity\": 10,\n      \"totalPrice\": 299.9\n    }\n  ],\n  \"totalPrice\": 299.9\n}"
+							"cookie": []
 						},
 						{
 							"name": "Access token is missing or invalid.",
