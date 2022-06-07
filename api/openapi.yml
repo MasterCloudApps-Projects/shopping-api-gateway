@@ -627,8 +627,6 @@ paths:
       responses:
         '202':
           description: Accepted to complete shopping cart.
-        '400':
-          $ref: '#/components/responses/BadRequestError'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -737,8 +735,6 @@ paths:
       responses:
         '202':
           description: Accepted shopping cart item deletion.
-        '400':
-          $ref: '#/components/responses/BadRequestError'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
