@@ -4,6 +4,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 
@@ -198,5 +199,46 @@ public class TestConstants {
 
   public static final String ITEMS_FIELD = "items";
 
+  public static final String UNIT_PRICE_FIELD = "unitPrice";
+
   public static final String TOTAL_PRICE_FIELD = "totalPrice";
+
+  public static final long SHOPPING_CART_ID = 1653847319082L;
+
+  public static final String SHOPPING_CART_ALREADY_EXISTS_MSG = "Already exists incomplete shopping cart with id=%s";
+
+  public static final String SHOPPING_CART_ALREADY_EXISTS_RESPONSE =
+      "{\"error\":\"" + SHOPPING_CART_ALREADY_EXISTS_MSG + "\"}";
+
+  public static final String PRODUCT_ID_FIELD = "productId";
+
+  public static final String PRODUCT_ID = "1";
+
+  public static final String PRODUCT_PRICE_AND_QUANTITY = String.format(Locale.ENGLISH,
+      "{\"unitPrice\":%.2f,\"quantity\":%d}", PRODUCT_PRICE, PRODUCT_QUANTITY);
+
+  public static final String SHOPPING_CART_NOT_FOUND_RESPONSE = "{\n"
+      + "  \"error\": \"Shopping cart not found.\"\n"
+      + "}";
+
+  public static final String CAN_NOT_DELETE_SHOPPING_CART_RESPONSE = "{\n"
+      + "  \"error\": \"Can't delete completed cart\"\n"
+      + "}";
+
+  public static final String CAN_NOT_COMPLETE_SHOPPING_CART_RESPONSE = "{\n"
+      + "  \"error\": \"Shopping cart can't be completed.\"\n"
+      + "}";
+
+  public static final String CAN_NOT_SET_ITEM_TO_SHOPPING_CART_RESPONSE = "{\n"
+      + "  \"error\": \"Can't set item to completed cart\"\n"
+      + "}";
+
+  public static final String SET_ITEM_BAD_REQUEST_RESPONSE = "{\n"
+      + "  \"error\": \"Can't set item, check item unit price and quantity to be greater than 0\"\n"
+      + "}";
+
+  public static final String CAN_NOT_DELETE_ITEM_FROM_SHOPPING_CART_RESPONSE = "{\n"
+      + "  \"error\": \"Can't delete item from completed cart\"\n"
+      + "}";
+
 }

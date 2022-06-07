@@ -6,6 +6,8 @@ import static es.codeurjc.mca.tfm.apigateway.TestConstants.ID_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.ITEMS_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.LOCATION_HEADER;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCTS_BASE_URL;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_ID;
+import static es.codeurjc.mca.tfm.apigateway.TestConstants.PRODUCT_PRICE_AND_QUANTITY;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.SHOPPING_CARTS_BASE_URL;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.TOTAL_PRICE_FIELD;
 import static es.codeurjc.mca.tfm.apigateway.TestConstants.USER_ID_FIELD;
@@ -35,10 +37,6 @@ public class PurchasesApiTest extends AbstractIntegrationBaseTest {
   private static final long WAIT_TIME = 3000L;
 
   private static final int MAX_RETRIES = 5;
-
-  private static final String PRODUCT_ID = "1";
-
-  private static final String PRODUCT_PRICE_AND_QUANTITY = "{\"unitPrice\":19.99,\"quantity\":1}";
 
   private static Integer userId = null;
 

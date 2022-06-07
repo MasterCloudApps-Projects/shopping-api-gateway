@@ -91,10 +91,7 @@ public abstract class AbstractBaseProviderCDCTTest extends TestContainersBase {
     if (ADMIN_ID == null) {
       this.createAdmin();
     }
-
-    if (ADMIN_TOKEN == null) {
-      this.authenticateAdmin();
-    }
+    this.authenticateAdmin();
 
     return Map.of(TOKEN_FIELD, ADMIN_TOKEN,
         ID_FIELD, "99999999"
@@ -113,10 +110,7 @@ public abstract class AbstractBaseProviderCDCTTest extends TestContainersBase {
     if (USER_ID == null) {
       this.createUser(VALID_CREDENTIALS_POST_BODY);
     }
-
-    if (USER_TOKEN == null) {
-      this.authenticateUser();
-    }
+    this.authenticateUser();
 
     return Map.of(TOKEN_FIELD, USER_TOKEN,
         ID_FIELD, String.valueOf(USER_ID)
