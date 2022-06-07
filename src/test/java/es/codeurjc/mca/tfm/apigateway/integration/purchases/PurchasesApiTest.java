@@ -198,7 +198,6 @@ public class PurchasesApiTest extends AbstractIntegrationBaseTest {
         shoppingCartId = null;
         break;
       } catch (AssertionError assertionError) {
-        System.out.println("INTENTO " + attempts);
         if (attempts > MAX_RETRIES) {
           throw assertionError;
         }
