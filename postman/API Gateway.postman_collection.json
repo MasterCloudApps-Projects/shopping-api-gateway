@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "791e619a-9c5e-43c1-a1c2-d29d4d9b58af",
+		"_postman_id": "ae56ac5e-ba7b-43e5-8956-79d01d172686",
 		"name": "API Gateway",
 		"description": "Master cloud apps TFM API Gateway.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2441,7 +2441,7 @@
 									"\r",
 									"pm.test(\"Location header is present\", function () {\r",
 									"    pm.response.to.have.header(\"Location\");\r",
-									"    pm.response.to.be.header(\"Location\", pm.environment.get(\"baseUrl\")+'/products/'+pm.environment.get(\"productId\"));\r",
+									"    pm.response.to.be.header(\"Location\", pm.environment.get(\"baseUrl\")+'/products/'+pm.environment.get(\"secondProductId\"));\r",
 									"});\r",
 									""
 								],
@@ -2765,7 +2765,7 @@
 									"pm.test(\"Check product info\", function () {\r",
 									"    const responseJson = pm.response.json();\r",
 									"    pm.expect(responseJson.id).to.eql(pm.environment.get(\"productId\"));\r",
-									"    pm.expect(responseJson.name).to.eql(pm.collectionVariables.get(\"productName\").toUpperCase());\r",
+									"    pm.expect(responseJson.name).to.eql(pm.environment.get(\"productName\").toUpperCase());\r",
 									"    pm.expect(responseJson.description).to.eql(\"PRODUCT DESCRIPTION\");\r",
 									"    pm.expect(responseJson.price).to.eql(12.00);\r",
 									"    pm.expect(responseJson.quantity).to.eql(5);\r",
@@ -3027,7 +3027,7 @@
 									"pm.test(\"Check product info\", function () {\r",
 									"    const responseJson = pm.response.json();\r",
 									"    pm.expect(responseJson.id).to.eql(pm.environment.get(\"productId\"));\r",
-									"    pm.expect(responseJson.name).to.eql(pm.collectionVariables.get(\"productName\").toUpperCase() + \" UPDATED\");\r",
+									"    pm.expect(responseJson.name).to.eql(pm.environment.get(\"productName\").toUpperCase() + \" UPDATED\");\r",
 									"    pm.expect(responseJson.description).to.eql(\"UPDATED DESCRIPTION\");\r",
 									"    pm.expect(responseJson.price).to.eql(29.99);\r",
 									"    pm.expect(responseJson.quantity).to.eql(10);\r",
@@ -3400,7 +3400,7 @@
 									"      (p => p.id === pm.environment.get(\"productId\"));\r",
 									"  pm.expect(addedProduct)\r",
 									"    .to.be.an(\"object\", \"Could not find the product\");\r",
-									"    pm.expect(addedProduct.name).to.eql(pm.collectionVariables.get(\"productName\").toUpperCase() + \" UPDATED\");\r",
+									"    pm.expect(addedProduct.name).to.eql(pm.environment.get(\"productName\").toUpperCase() + \" UPDATED\");\r",
 									"    pm.expect(addedProduct.description).to.eql(\"UPDATED DESCRIPTION\");\r",
 									"    pm.expect(addedProduct.price).to.eql(29.99);\r",
 									"    pm.expect(addedProduct.quantity).to.eql(10);\r",
@@ -4154,7 +4154,8 @@
 									"value": "application/json"
 								}
 							],
-							"cookie": []
+							"cookie": [],
+							"body": ""
 						},
 						{
 							"name": "Access token is missing or invalid.",
