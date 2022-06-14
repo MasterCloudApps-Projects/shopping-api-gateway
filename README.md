@@ -234,6 +234,11 @@ This project has two available environments:
 * Production (PRO): productive environment. Accessible in URL https://apigw-tfm-amartinm82.cloud.okteto.net.
 
 The mechanism used to deploy the application in any of the previous environment is via github actions, that are defined in workflows in folder [.github/workflows](.github/workflows).
+For this mechanism to work, it is necessary to add the following action secrets to the github repository:
+* **DOCKERHUB_TOKEN**: Token used to publish docker images in Dockerhub.
+* **DOCKERHUB_USERNAME**: username used to publish docker images in Dockerhub.
+* **KUBECONFIG**: kubeconfig of the k8s cluster where deploy the microservice.
+
 ### PRE
 When a push is done on remote branch (or a PR), github actions jobs defined in [ci-cd.yml](.github/workflows/ci-cd.yml) will be fired. All the jobs depends o the previous one, so if one of them fails, the project won't be deployed in the PRE environment:
 * **checkstyle**: Analyzes source code in the branch, if exists style errors fails.
